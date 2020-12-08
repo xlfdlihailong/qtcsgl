@@ -1,0 +1,52 @@
+[17:45:07.203]-[tid: 5748]-[qlib/qlib.h:624]: ":/qss/psblack.css"
+[17:45:07.203]-[tid: 5748]-[qlib/qlib.h:629]: open success
+[17:45:07.328]-[tid: 5748]-[qobject.cpp:3513]: QMetaObject::connectSlotsByName: No matching signal for on_stuTableWidget_customContextMenuRequested(QPoint)
+[17:45:07.344]-[tid: 5748]-[mainwindow.cpp:18][strPathConf : xlfd.conf]
+[17:45:07.344]-[tid: 5748]-[plib.cpp:794][找不到配置文件xlfd.conf]
+[17:45:07.344]-[tid: 5748]-[mainwindow.cpp:19][plib::addConfString("basci","xlfd","zero22") : 0]
+[17:45:07.344]-[tid: 5748]-[plib.h:4501][找不到配置文件xlfd.conf]
+[17:45:07.344]-[tid: 5748]-[mainwindow.cpp:20][plib::setConfString("basic","xlfd","zzzzzz") : 0]
+[17:45:07.344]-[tid: 5748]-[plib.cpp:710][strPathConf : xlfd.conf]
+[17:45:07.344]-[tid: 5748]-[plib.cpp:713][找不到配置文件xlfd.conf]
+[17:45:07.344]-[tid: 5748]-[mainwindow.cpp:21][plib::delConfString("basic","fwefew") : 0]
+[17:45:07.344]-[tid: 5748]-[plib.cpp:702][找不到配置文件xlfd.conf]
+[17:45:07.344]-[tid: 5748]-[mainwindow.cpp:22][plib::getConfString("basic","xlfd") : ]
+[17:45:08.398]-[tid: 2768]-[plib.cpp:30]["Disconnect from server..."+std::string(strerror(errno)) : Disconnect from server...No error]
+[17:45:09.085]-[tid: 5748]-[xtreewidget.cpp:79][strNameSystem : 空基系统] [strNameStation : DTC]
+[17:45:09.569]-[tid: 2768]-[plib.cpp:47][str : 1th reconnect fail!]
+[17:45:11.696]-[tid: 2768]-[plib.cpp:47][str : 2th reconnect fail!]
+[17:45:13.522]-[tid: 5748]-[xtreewidget.cpp:79][strNameSystem : 空基系统] [strNameStation : KSC]
+[17:45:13.741]-[tid: 2768]-[plib.cpp:47][str : 3th reconnect fail!]
+[17:45:16.114]-[tid: 2768]-[plib.cpp:47][str : 4th reconnect fail!]
+[17:45:18.160]-[tid: 2768]-[plib.cpp:47][str : 5th reconnect fail!]
+[17:52:37.566]-[tid: 2176]-[qlib/qlib.h:624]: ":/qss/psblack.css"
+[17:52:37.566]-[tid: 2176]-[qlib/qlib.h:629]: open success
+[17:52:37.676]-[tid: 2176]-[qobject.cpp:3513]: QMetaObject::connectSlotsByName: No matching signal for on_stuTableWidget_customContextMenuRequested(QPoint)
+[17:52:37.692]-[tid: 2176]-[mainwindow.cpp:18][strPathConf : xlfd.conf]
+[17:52:37.692]-[tid: 2176]-[plib.cpp:794][找不到配置文件xlfd.conf]
+[17:52:37.692]-[tid: 2176]-[mainwindow.cpp:19][plib::addConfString("basci","xlfd","zero22") : 0]
+[17:52:37.692]-[tid: 2176]-[plib.h:4501][找不到配置文件xlfd.conf]
+[17:52:37.692]-[tid: 2176]-[mainwindow.cpp:20][plib::setConfString("basic","xlfd","zzzzzz") : 0]
+[17:52:37.692]-[tid: 2176]-[plib.cpp:710][strPathConf : xlfd.conf]
+[17:52:37.692]-[tid: 2176]-[plib.cpp:713][找不到配置文件xlfd.conf]
+[17:52:37.692]-[tid: 2176]-[mainwindow.cpp:21][plib::delConfString("basic","fwefew") : 0]
+[17:52:37.692]-[tid: 2176]-[plib.cpp:702][找不到配置文件xlfd.conf]
+[17:52:37.692]-[tid: 2176]-[mainwindow.cpp:22][plib::getConfString("basic","xlfd") : ]
+[17:52:42.425]-[tid: 2176]-[xtreewidget.cpp:79][strNameSystem : 空基系统] [strNameStation : KSC]
+[17:52:42.878]-[tid: 2176]-[xtreewidget.cpp:79][strNameSystem : 空基系统] [strNameStation : SYC]
+[17:52:43.299]-[tid: 2176]-[xtreewidget.cpp:79][strNameSystem : 空基系统] [strNameStation : YD1]
+[17:54:15.079]-[tid: 5572]-[qlib/qlib.h:624]: ":/qss/psblack.css"
+[17:54:15.079]-[tid: 5572]-[qlib/qlib.h:629]: open success
+[17:54:15.189]-[tid: 5572]-[qobject.cpp:3513]: QMetaObject::connectSlotsByName: No matching signal for on_stuTableWidget_customContextMenuRequested(QPoint)
+[17:54:15.204]-[tid: 5572]-[mainwindow.cpp:18][strPathConf : xlfd.conf]
+[17:54:15.204]-[tid: 5572]-[plib.cpp:794][找不到配置文件xlfd.conf]
+[17:54:15.220]-[tid: 5572]-[mainwindow.cpp:19][plib::addConfString("basci","xlfd","zero22") : 0]
+[17:54:15.220]-[tid: 5572]-[plib.h:4501][找不到配置文件xlfd.conf]
+[17:54:15.220]-[tid: 5572]-[mainwindow.cpp:20][plib::setConfString("basic","xlfd","zzzzzz") : 0]
+[17:54:15.220]-[tid: 5572]-[plib.cpp:710][strPathConf : xlfd.conf]
+[17:54:15.220]-[tid: 5572]-[plib.cpp:713][找不到配置文件xlfd.conf]
+[17:54:15.220]-[tid: 5572]-[mainwindow.cpp:21][plib::delConfString("basic","fwefew") : 0]
+[17:54:15.220]-[tid: 5572]-[plib.cpp:702][找不到配置文件xlfd.conf]
+[17:54:15.220]-[tid: 5572]-[mainwindow.cpp:22][plib::getConfString("basic","xlfd") : ]
+[17:57:53.894]-[tid: 5572]-[xtreewidget.cpp:79][strNameSystem : 空基系统] [strNameStation : SYC]
+[17:57:55.439]-[tid: 5572]-[xtreewidget.cpp:79][strNameSystem : 空基系统] [strNameStation : YD1]
