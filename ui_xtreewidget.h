@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'xtreewidget.ui'
 **
-** Created by: Qt User Interface Compiler version 5.13.2
+** Created by: Qt User Interface Compiler version 5.5.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -10,7 +10,10 @@
 #define UI_XTREEWIDGET_H
 
 #include <QtCore/QVariant>
+#include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QHeaderView>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 #include "qtreewidgetexx.h"
@@ -26,14 +29,14 @@ public:
     void setupUi(QWidget *xTreeWidget)
     {
         if (xTreeWidget->objectName().isEmpty())
-            xTreeWidget->setObjectName(QString::fromUtf8("xTreeWidget"));
+            xTreeWidget->setObjectName(QStringLiteral("xTreeWidget"));
         xTreeWidget->resize(751, 640);
         verticalLayout = new QVBoxLayout(xTreeWidget);
         verticalLayout->setSpacing(0);
-        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
+        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         verticalLayout->setContentsMargins(0, 0, 0, 0);
         treeWidget = new QTreeWidgetExx(xTreeWidget);
-        treeWidget->setObjectName(QString::fromUtf8("treeWidget"));
+        treeWidget->setObjectName(QStringLiteral("treeWidget"));
 
         verticalLayout->addWidget(treeWidget);
 
@@ -45,7 +48,7 @@ public:
 
     void retranslateUi(QWidget *xTreeWidget)
     {
-        xTreeWidget->setWindowTitle(QCoreApplication::translate("xTreeWidget", "Form", nullptr));
+        xTreeWidget->setWindowTitle(QApplication::translate("xTreeWidget", "Form", 0));
     } // retranslateUi
 
 };

@@ -1,26 +1,23 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'xTableWidget.h'
 **
-** Created by: The Qt Meta Object Compiler version 67 (Qt 5.13.2)
+** Created by: The Qt Meta Object Compiler version 67 (Qt 5.5.0)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include <memory>
 #include "../xTableWidget.h"
 #include <QtCore/qbytearray.h>
 #include <QtCore/qmetatype.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'xTableWidget.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 67
-#error "This file was generated using the moc from 5.13.2. It"
+#error "This file was generated using the moc from 5.5.0. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
 
 QT_BEGIN_MOC_NAMESPACE
-QT_WARNING_PUSH
-QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_xTableWidget_t {
     QByteArrayData data[20];
     char stringdata0[274];
@@ -67,7 +64,7 @@ QT_MOC_LITERAL(19, 258, 15) // "slotUnSelectAll"
 static const uint qt_meta_data_xTableWidget[] = {
 
  // content:
-       8,       // revision
+       7,       // revision
        0,       // classname
        0,    0, // classinfo
       11,   14, // methods
@@ -113,7 +110,7 @@ static const uint qt_meta_data_xTableWidget[] = {
 void xTableWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
     if (_c == QMetaObject::InvokeMetaMethod) {
-        auto *_t = static_cast<xTableWidget *>(_o);
+        xTableWidget *_t = static_cast<xTableWidget *>(_o);
         Q_UNUSED(_t)
         switch (_id) {
         case 0: _t->sigDoubleClick((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
@@ -131,24 +128,20 @@ void xTableWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
         int *result = reinterpret_cast<int *>(_a[0]);
+        void **func = reinterpret_cast<void **>(_a[1]);
         {
-            using _t = void (xTableWidget::*)(int , int );
-            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&xTableWidget::sigDoubleClick)) {
+            typedef void (xTableWidget::*_t)(int , int );
+            if (*reinterpret_cast<_t *>(func) == static_cast<_t>(&xTableWidget::sigDoubleClick)) {
                 *result = 0;
-                return;
             }
         }
     }
 }
 
-QT_INIT_METAOBJECT const QMetaObject xTableWidget::staticMetaObject = { {
-    &QWidget::staticMetaObject,
-    qt_meta_stringdata_xTableWidget.data,
-    qt_meta_data_xTableWidget,
-    qt_static_metacall,
-    nullptr,
-    nullptr
-} };
+const QMetaObject xTableWidget::staticMetaObject = {
+    { &QWidget::staticMetaObject, qt_meta_stringdata_xTableWidget.data,
+      qt_meta_data_xTableWidget,  qt_static_metacall, Q_NULLPTR, Q_NULLPTR}
+};
 
 
 const QMetaObject *xTableWidget::metaObject() const
@@ -158,9 +151,9 @@ const QMetaObject *xTableWidget::metaObject() const
 
 void *xTableWidget::qt_metacast(const char *_clname)
 {
-    if (!_clname) return nullptr;
+    if (!_clname) return Q_NULLPTR;
     if (!strcmp(_clname, qt_meta_stringdata_xTableWidget.stringdata0))
-        return static_cast<void*>(this);
+        return static_cast<void*>(const_cast< xTableWidget*>(this));
     return QWidget::qt_metacast(_clname);
 }
 
@@ -184,8 +177,7 @@ int xTableWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 // SIGNAL 0
 void xTableWidget::sigDoubleClick(int _t1, int _t2)
 {
-    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t2))) };
+    void *_a[] = { Q_NULLPTR, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
     QMetaObject::activate(this, &staticMetaObject, 0, _a);
 }
-QT_WARNING_POP
 QT_END_MOC_NAMESPACE
