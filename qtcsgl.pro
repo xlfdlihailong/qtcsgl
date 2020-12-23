@@ -16,11 +16,6 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     qlib/qlib.cpp \
     qlib/plib/plib.cpp \
-    qlib/plib/pxml.cpp \
-    qlib/plib/tinystr.cpp \
-    qlib/plib/tinyxml.cpp \
-    qlib/plib/tinyxmlerror.cpp \
-    qlib/plib/tinyxmlparser.cpp \
     xTableWidget.cpp \
     xtreewidget.cpp \
     qtreewidgetexx.cpp
@@ -28,9 +23,6 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     qlib/qlib.h \
     qlib/plib/plib.h \
-    qlib/plib/pxml.h \
-    qlib/plib/tinystr.h \
-    qlib/plib/tinyxml.h \
     xTableWidget.h \
     xtreewidget.h \
     qtreewidgetexx.h

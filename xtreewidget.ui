@@ -30,16 +30,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QTreeWidgetExx" name="treeWidget" native="true">
-     <property name="font">
-      <font>
-       <family>楷体</family>
-       <pointsize>11</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-    </widget>
+    <widget class="QTreeWidgetExx" name="treeWidget" native="true"/>
    </item>
   </layout>
  </widget>

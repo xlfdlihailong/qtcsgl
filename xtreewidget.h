@@ -9,6 +9,7 @@
 #include <QInputDialog>
 #include <QLineEdit>
 #include <QMessageBox>
+#include <QHeaderView>
 #include "qlib/qlib.h"
 namespace Ui {
 class xTreeWidget;

@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created by: Qt User Interface Compiler version 5.5.0
+** Created by: Qt User Interface Compiler version 5.13.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -10,11 +10,8 @@
 #define UI_MAINWINDOW_H
 
 #include <QtCore/QVariant>
-#include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
-#include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QHBoxLayout>
-#include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
@@ -36,91 +33,88 @@ public:
     QHBoxLayout *horizontalLayout_2;
     QHBoxLayout *horizontalLayout;
     xTreeWidget *ptree;
-    QTabWidget *tabWidget;
+    QTabWidget *ptab;
     QWidget *tabconf;
     QHBoxLayout *horizontalLayout_4;
     QVBoxLayout *verticalLayout;
     QHBoxLayout *horizontalLayout_3;
     QLabel *label_host;
-    QLineEdit *lineEdit;
+    QLineEdit *lineEditQuery;
     QPushButton *pushButtonAddConf;
     xTableWidget *ptable;
     QWidget *tabTask;
+    QHBoxLayout *horizontalLayout_5;
+    xTableWidget *ptableTask;
+    QWidget *tabjk;
+    QHBoxLayout *horizontalLayout_6;
+    xTableWidget *ptablejk;
     QMenuBar *menuBar;
     QStatusBar *statusBar;
 
     void setupUi(QMainWindow *MainWindow)
     {
         if (MainWindow->objectName().isEmpty())
-            MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(1342, 976);
+            MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
+        MainWindow->resize(1582, 976);
         centralWidget = new QWidget(MainWindow);
-        centralWidget->setObjectName(QStringLiteral("centralWidget"));
-        QFont font;
-        font.setFamily(QString::fromUtf8("\346\245\267\344\275\223"));
-        font.setPointSize(14);
-        font.setBold(true);
-        font.setWeight(75);
-        centralWidget->setFont(font);
+        centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         horizontalLayout_2 = new QHBoxLayout(centralWidget);
         horizontalLayout_2->setSpacing(6);
         horizontalLayout_2->setContentsMargins(11, 11, 11, 11);
-        horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
+        horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
         horizontalLayout = new QHBoxLayout();
-        horizontalLayout->setSpacing(6);
-        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
+        horizontalLayout->setSpacing(0);
+        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
         ptree = new xTreeWidget(centralWidget);
-        ptree->setObjectName(QStringLiteral("ptree"));
+        ptree->setObjectName(QString::fromUtf8("ptree"));
         ptree->setMinimumSize(QSize(150, 55));
         ptree->setMaximumSize(QSize(150, 16777215));
-        ptree->setFont(font);
 
         horizontalLayout->addWidget(ptree);
 
-        tabWidget = new QTabWidget(centralWidget);
-        tabWidget->setObjectName(QStringLiteral("tabWidget"));
-        QFont font1;
-        font1.setFamily(QString::fromUtf8("\346\245\267\344\275\223"));
-        font1.setPointSize(12);
-        font1.setBold(true);
-        font1.setWeight(75);
-        tabWidget->setFont(font1);
+        ptab = new QTabWidget(centralWidget);
+        ptab->setObjectName(QString::fromUtf8("ptab"));
         tabconf = new QWidget();
-        tabconf->setObjectName(QStringLiteral("tabconf"));
-        QFont font2;
-        font2.setFamily(QString::fromUtf8("\346\245\267\344\275\223"));
-        tabconf->setFont(font2);
+        tabconf->setObjectName(QString::fromUtf8("tabconf"));
         horizontalLayout_4 = new QHBoxLayout(tabconf);
-        horizontalLayout_4->setSpacing(6);
+        horizontalLayout_4->setSpacing(0);
         horizontalLayout_4->setContentsMargins(11, 11, 11, 11);
-        horizontalLayout_4->setObjectName(QStringLiteral("horizontalLayout_4"));
+        horizontalLayout_4->setObjectName(QString::fromUtf8("horizontalLayout_4"));
+        horizontalLayout_4->setContentsMargins(0, 0, 0, 0);
         verticalLayout = new QVBoxLayout();
-        verticalLayout->setSpacing(6);
-        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
+        verticalLayout->setSpacing(0);
+        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
         horizontalLayout_3 = new QHBoxLayout();
-        horizontalLayout_3->setSpacing(6);
-        horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
+        horizontalLayout_3->setSpacing(0);
+        horizontalLayout_3->setObjectName(QString::fromUtf8("horizontalLayout_3"));
         label_host = new QLabel(tabconf);
-        label_host->setObjectName(QStringLiteral("label_host"));
+        label_host->setObjectName(QString::fromUtf8("label_host"));
+        QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+        sizePolicy.setHorizontalStretch(3);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(label_host->sizePolicy().hasHeightForWidth());
+        label_host->setSizePolicy(sizePolicy);
         label_host->setMinimumSize(QSize(0, 0));
-        QFont font3;
-        font3.setPointSize(14);
-        label_host->setFont(font3);
 
         horizontalLayout_3->addWidget(label_host);
 
-        lineEdit = new QLineEdit(tabconf);
-        lineEdit->setObjectName(QStringLiteral("lineEdit"));
+        lineEditQuery = new QLineEdit(tabconf);
+        lineEditQuery->setObjectName(QString::fromUtf8("lineEditQuery"));
+        QSizePolicy sizePolicy1(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        sizePolicy1.setHorizontalStretch(4);
+        sizePolicy1.setVerticalStretch(0);
+        sizePolicy1.setHeightForWidth(lineEditQuery->sizePolicy().hasHeightForWidth());
+        lineEditQuery->setSizePolicy(sizePolicy1);
 
-        horizontalLayout_3->addWidget(lineEdit);
+        horizontalLayout_3->addWidget(lineEditQuery);
 
         pushButtonAddConf = new QPushButton(tabconf);
-        pushButtonAddConf->setObjectName(QStringLiteral("pushButtonAddConf"));
-        QFont font4;
-        font4.setPointSize(13);
-        font4.setBold(true);
-        font4.setWeight(75);
-        pushButtonAddConf->setFont(font4);
+        pushButtonAddConf->setObjectName(QString::fromUtf8("pushButtonAddConf"));
+        QSizePolicy sizePolicy2(QSizePolicy::Expanding, QSizePolicy::Minimum);
+        sizePolicy2.setHorizontalStretch(1);
+        sizePolicy2.setVerticalStretch(0);
+        sizePolicy2.setHeightForWidth(pushButtonAddConf->sizePolicy().hasHeightForWidth());
+        pushButtonAddConf->setSizePolicy(sizePolicy2);
 
         horizontalLayout_3->addWidget(pushButtonAddConf);
 
@@ -128,7 +122,7 @@ public:
         verticalLayout->addLayout(horizontalLayout_3);
 
         ptable = new xTableWidget(tabconf);
-        ptable->setObjectName(QStringLiteral("ptable"));
+        ptable->setObjectName(QString::fromUtf8("ptable"));
         ptable->setMinimumSize(QSize(55, 55));
 
         verticalLayout->addWidget(ptable);
@@ -136,29 +130,51 @@ public:
 
         horizontalLayout_4->addLayout(verticalLayout);
 
-        tabWidget->addTab(tabconf, QString());
+        ptab->addTab(tabconf, QString());
         tabTask = new QWidget();
-        tabTask->setObjectName(QStringLiteral("tabTask"));
-        tabTask->setFont(font2);
-        tabWidget->addTab(tabTask, QString());
+        tabTask->setObjectName(QString::fromUtf8("tabTask"));
+        horizontalLayout_5 = new QHBoxLayout(tabTask);
+        horizontalLayout_5->setSpacing(0);
+        horizontalLayout_5->setContentsMargins(11, 11, 11, 11);
+        horizontalLayout_5->setObjectName(QString::fromUtf8("horizontalLayout_5"));
+        horizontalLayout_5->setContentsMargins(0, 0, 0, 0);
+        ptableTask = new xTableWidget(tabTask);
+        ptableTask->setObjectName(QString::fromUtf8("ptableTask"));
 
-        horizontalLayout->addWidget(tabWidget);
+        horizontalLayout_5->addWidget(ptableTask);
+
+        ptab->addTab(tabTask, QString());
+        tabjk = new QWidget();
+        tabjk->setObjectName(QString::fromUtf8("tabjk"));
+        horizontalLayout_6 = new QHBoxLayout(tabjk);
+        horizontalLayout_6->setSpacing(0);
+        horizontalLayout_6->setContentsMargins(11, 11, 11, 11);
+        horizontalLayout_6->setObjectName(QString::fromUtf8("horizontalLayout_6"));
+        horizontalLayout_6->setContentsMargins(0, 0, 0, 0);
+        ptablejk = new xTableWidget(tabjk);
+        ptablejk->setObjectName(QString::fromUtf8("ptablejk"));
+
+        horizontalLayout_6->addWidget(ptablejk);
+
+        ptab->addTab(tabjk, QString());
+
+        horizontalLayout->addWidget(ptab);
 
 
         horizontalLayout_2->addLayout(horizontalLayout);
 
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
-        menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1342, 23));
+        menuBar->setObjectName(QString::fromUtf8("menuBar"));
+        menuBar->setGeometry(QRect(0, 0, 1582, 22));
         MainWindow->setMenuBar(menuBar);
         statusBar = new QStatusBar(MainWindow);
-        statusBar->setObjectName(QStringLiteral("statusBar"));
+        statusBar->setObjectName(QString::fromUtf8("statusBar"));
         MainWindow->setStatusBar(statusBar);
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(0);
+        ptab->setCurrentIndex(2);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -166,11 +182,12 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0));
+        MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
         label_host->setText(QString());
-        pushButtonAddConf->setText(QApplication::translate("MainWindow", "\345\242\236\345\212\240\351\205\215\347\275\256", 0));
-        tabWidget->setTabText(tabWidget->indexOf(tabconf), QApplication::translate("MainWindow", "\351\205\215\347\275\256\346\226\207\344\273\266", 0));
-        tabWidget->setTabText(tabWidget->indexOf(tabTask), QApplication::translate("MainWindow", "\344\273\273\345\212\241\351\230\237\345\210\227", 0));
+        pushButtonAddConf->setText(QCoreApplication::translate("MainWindow", "\345\242\236\345\212\240\351\205\215\347\275\256", nullptr));
+        ptab->setTabText(ptab->indexOf(tabconf), QCoreApplication::translate("MainWindow", "\351\205\215\347\275\256\346\226\207\344\273\266", nullptr));
+        ptab->setTabText(ptab->indexOf(tabTask), QCoreApplication::translate("MainWindow", "\344\273\273\345\212\241\351\230\237\345\210\227", nullptr));
+        ptab->setTabText(ptab->indexOf(tabjk), QCoreApplication::translate("MainWindow", "\347\263\273\347\273\237\347\233\221\346\216\247", nullptr));
     } // retranslateUi
 
 };

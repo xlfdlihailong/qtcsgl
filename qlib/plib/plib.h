@@ -1991,6 +1991,15 @@ public:
     {
         this->init(acstr,len);
     }
+    pstring toLower()
+    {
+        pstring stres;
+        stres.resize(this->size());
+        for(int i=0;i<this->size();i++)
+            stres[i]=tolower(this->at(i));
+        return stres;
+    }
+
     //找到所有字符串索引
     plist<int> findIndexAll(pstring strfind)
     {
@@ -2028,6 +2037,15 @@ public:
         plist<pstring> pres;
         for(int i=0;i<vres.size();i++)
         {
+            pres.append(vres[i]);
+        }
+        return pres;
+    }
+    plist<pstring> splitOne(string pattern) {
+        pstring stro = *this;
+        vector<string> vres = common_split_one(stro, pattern);
+        plist<pstring> pres;
+        for (size_t i = 0; i < vres.size(); i++) {
             pres.append(vres[i]);
         }
         return pres;
@@ -2615,7 +2633,8 @@ public:
         int iresHeader=-1;
         if((iresHeader=this->recv((char*)&sHeader,sizeof(STRUCT_HEADER),timeout))<0)
         {
-            hlog("接收包头失败");
+            hlog("###### recv header fail ####");
+//            hlog("接收包头失败");
             //不要打印，不然会一直打印，因为如果接收不到就一直打
             return iresHeader;
         }
@@ -3911,13 +3930,19 @@ public:
         return plib::getCmdOutput(strCMDAll);
     }
     //通过中转服务器hlog(plib::getShellOutputXshBridge("130.242.60.241","172.16.11.6","scfwq_325","df -h"));
-    static string xshbridge(string stripDest,string cmd,string strpwd="scfwq_325",string stripBridge="172.16.11.6",string pwdbridge="scfwq_325")
+    static string xshbridge(string stripDest,string cmd,string strpwd="scfwq_325",string stripBridge="172.16.11.6",string pwdbridge="scfwq_325",pstring user="root",int port=22)
     {
         string info="xsh "+strpwd+" "+stripDest+" '"+cmd+"'";
         hlog(info);
 //        return xshplink(stripBridge,info,pwdbridge);
-        return xsh(stripBridge,info,pwdbridge);
+        return xsh(stripBridge,info,pwdbridge,user,port);
     }
+    //通过外网11.6中转,可以远程执行任何机器
+    static pstring xshzky(pstring host,pstring cmd)
+    {
+        return xshbridge(host,cmd,"scfwq_325","7lw5p1zet7.54http.tech","scfwq_325","root",53853);
+    }
+
     //获取远程根目录使用大小
     static string getRemoteRootDiskUsage(string strhost,string pwd="scfwq_325")
     {
@@ -4557,77 +4582,188 @@ public:
     static int initLog(string strnewpath);
 
 
-    /*string str=string("    pstring name;\n") +
-                  "    double db;\n" +
-                  "    int id;";
-                  原始字符串如上所示,直接复制到idea中去生成字符串,所有字段的,然后调用这个函数
-                  解析,生成is和os,简化序列化过程
-                   要求是字段名必须之后紧跟分号，要不然识别不了 int data; unsigned long long udata;
-                   对内部有指针的不支持序列化,声明后边不要带注释,不支持char数组
-        */
-    static void generateISandOS(string str)
-    {
+    /*
+       * 类变量不要直接在声明中赋值,clion和本函数暂不支持
+       * 复制从class开始到字段结束,获取类名等
+       * char 类的话,数据不能只是一个\0
+       * 支持char数组,char类型,bool类型,支持int数组,结构体,结构体数组
+       * 类型名已经支持unsigned long long这类的,不用统一改成ulonglong此类了,自动解析
+       * char数组或者结构体数组里面必须是确定的数字,不支持宏定义,因为要涉及到字符串转变量名,等支持了再改
+       */
+      static void generateISAndOS(pstring str) {
+  //        hlog(str);
+          //根据行分割先
+          //去掉空行
+          pliststring lstrall = str.split("\n{");
+  //        hlog(lstrall);
+          //结果
+          pstring strNameClass;
+          pliststring lstr;//纯字段名的列表
+          pliststring ltype;//每个类型,包括带空格的比如 unsigned long
+          //去掉public,获取classname,第一行一定是name,单独处理,这是为了防止
+          //变量名字里有class
+          strNameClass = lstrall[0].split(": ")[1];
+          hlog(strNameClass);
+          //第二行一定是public,直接略过,如果不是public无法当接口
+          for (int i = 2; i < lstrall.size(); i++) {
+              pstring stri = lstrall[i];
+  //            hlog(stri);
+              //如果前两个字符是//,则是注释,跳过
+              pstring strNoSpace = stri.getStringNoSpace();
+              if (strNoSpace.substr(0, 2) == "//")
+                  continue;
+              lstr.append(stri);
+          }
+          //此处是分割一行,这里根据;以及空格分割
+          //pmap<int ,pstring> mtest; //这是测试复合型map有可能这样的,要根据;先分,取出前边
+          //这样就能解决unsigned long long lltest这种前边带空格的
+          for (size_t i = 0; i < lstr.size(); i++) {
+              pstring pi = lstr[i];
+  //            hlog(pi);
+              pliststring listres = pi.splitOne(";");
+              //listres[0]就是pmap<int ,pstring> mtest,不带分号,现在就是再根据空格分割,最后一个就是要的变量名
+  //            hlog(listres[0]);
+              pliststring listres2 = listres[0].split(" ");
+  //            hlog(listres2);
+              pstring strResVal = listres2[listres2.size() - 1];
+  //            hlog(strResVal);
+              listres2.deleteEnd();
+              pstring strtype = listres2.join(" ");
+  //            hlog(strtype);
+              ltype.append(strtype);
+              lstr[i] = strResVal;
+  //            hlog(listres2.contains("char"));
+  //            hlog(lstr[i]);
+          }
+          //现在是纯字段名的列表
 
-        //根据行分割先
-        vector<string> lstr=split(str,"\n");
+          //现在开始组ostream字符串
+          string stros = "";
+          for (size_t i = 0; i < lstr.size(); i++) {
+              //            string pi=lstr[i];
+              //            stros+="<<\""+pi+": \"<<x."+pi+"<<\" \"";
+              string pi = lstr[i];
+              //这是变量名
+  //                        hlog(pi);
+              //要支持data[333]这种的要在此处判断,去掉括号后边的东西
+              string pval = pi;
+  //                        hlog(pval);
+              int ifind = pval.find('[');
 
-        for(int i=0;i<lstr.size();i++)
-        {
-            string pi=lstr[i];
+              pval = pval.substr(0, ifind);
+  //                        hlog(pval);
+  //            pstring strOneos = "<<\"" + pi + ": \"<<x." + pval + "<<\" \"";
+              pstring strOneos;
+  //            hlog(strOneos);
+              //一个os 有[]的数组
+              if (ifind != string::npos) {
+                  //如果是char数组,特殊处理
+                  if (ltype[i].contain("char")) {
+                      //获取数组长度再进行
+                      pliststring listForshuzu = pstring(pi).split("[]");
+  //                hlog(listForshuzu);
+                      //后边那个就是数组长度
+                      pstring strName = listForshuzu[0];
+  //                hlog(strName);
+                      int len = atoi(listForshuzu[1].c_str());
+                      pstring strtype = ltype[i];
+  //                hlog(strtype);
+  //                hlog(len);
+                      strOneos = "os<<\"" + pi + ": \"" + ";os.write(x." + pval + "," + plib::toString(len) + "*sizeof(" +
+                                 strtype + "));os<<\" \";";
+  //                    hlog(strOneos);
+                  } else {
+                      //其他数组要挨个存
+                      //获取数组长度再进行
+                      pliststring listForshuzu = pstring(pi).split("[]");
+  //                hlog(listForshuzu);
+                      //后边那个就是数组长度
+                      pstring strName = listForshuzu[0];
+                      hlog(strName);
+                      int len = atoi(listForshuzu[1].c_str());
+                      pstring strtype = ltype[i];
+  //                hlog(strtype);
+  //                hlog(len);
 
-            vector<string> listpi=split(pi," ");
+                      strOneos = "os<<\"" + pi + ": \";for(int i=0;i<" + plib::toString(len) + ";i++){os<<x." +
+                                 strName + "[i]<<\" \";}os<<\" \";";
+  //                    hlog(strOneos);
+                  }
+              } else {
+                  strOneos = "os<<\"" + pi + ": \"<<x." + pval + "<<\" \";";
+                  hlog(strOneos);
+              }
+              stros += strOneos;
+  //            hlog(stros);
+          }
+          stros += ";";
+          //再加上函数体等
+          stros = " friend ostream& operator<<(ostream& os," + strNameClass + " x){" + stros + "return os;}";
 
+  //        hlog("\n"+stros+"\n");
+          //现在开始组istream字符串
+          string stris = "";
+          for (size_t i = 0; i < lstr.size(); i++) {
+              string pi = lstr[i];
+  //            hlog(pi);
+              pstring pval = pi;
+  //            hlog(pval);
+              int ifind = pval.find('[');
+  //            pval = pval.substr(0, ifind);
+  //            hlog(pval);
+  //            hlog(ifind);
+              pstring strOneis;
+              if (ifind == string::npos) {
+  //                hlog("找不到 ");
+                  strOneis = string("plib::skipCountch(is,") + plib::toString(pi.size() + 2) + ");is>>x." + pval + ";";
+  //                hlog(strOneis);
+              } else {//找到了的话,说明是数组
+                  //获取数组长度再进行
+                  //如果是char数组,特殊处理
+                  if (ltype[i].contain("char")) {
+                      pliststring listForshuzu = pval.split("[]");
+  //                hlog(listForshuzu);
+                      //后边那个就是数组长度
+                      pstring strName = listForshuzu[0];
+  //                hlog(strName);
+                      int len = atoi(listForshuzu[1].c_str());
 
-            //再把每个根据空格分割,第一个带分号的一定是字段名字
-            for(int j=0;j<listpi.size();j++)
-            {
-                string pj=listpi[j];
-                if(pj.size()>0&&pj[pj.size()-1]==';')
-                {
-                    lstr[i]=pj;
+                      // 关于数组的单独处理
+                      pstring strshuzu = "is.read((char*)x." + strName + "," + plib::toString(len) + ");";
+  //                hlog(strshuzu);
+                      strOneis = string("plib::skipCountch(is,") + plib::toString(pi.size() + 2) + ");" + strshuzu;
 
-                    break;
-                }
-            }
-            //去掉分号
-            pi=lstr[i];
-            lstr[i]=pi.substr(0,pi.size()-1);
-        }
-        //现在是纯字段名的列表
+                  } else {
+                      //其他数组要挨个取
+                      pliststring listForshuzu = pval.split("[]");
+  //                hlog(listForshuzu);
+                      //后边那个就是数组长度
+                      pstring strName = listForshuzu[0];
+  //                hlog(strName);
+                      int len = atoi(listForshuzu[1].c_str());
 
+                      // 关于数组的单独处理
+                      pstring strshuzu = "is.read((char*)x." + strName + "," + plib::toString(len) + ");";
+  //                hlog(strshuzu);
+                      strOneis = string("plib::skipCountch(is,") + plib::toString(pi.size() + 2) + ");";
+                      strOneis += "for(int i=0;i<" + plib::toString(len) + ";i++){is>>x." +
+                                  strName + "[i];is.get();}";
+                      hlog(strOneis);
+                  }
+              }
+              //一个is
+  //            hlog(strOneis);
+              stris += strOneis;
+              //最后去掉空格，不然有字符串的话会失败
+              stris += "is.get();";
+          }
+          //再加上函数体等 istream
+          stris = " friend istream& operator>>(istream& is," + strNameClass + " &x){" + stris + "return is;}";
+          //统一打印
+          pstring code = "\n" + stros + stris + "\n";
+          hlog(code);
+      }
 
-        //现在开始组ostream字符串
-        string stros="os";
-        for(int i=0;i<lstr.size();i++)
-        {
-            string pi=lstr[i];
-            //这是变量名
-            //            hlog(pi);
-            //要支持data[333]这种的要在此处判断,去掉括号后边的东西
-            string pval=pi;
-            //            hlog(pval);
-            int ifind=pval.find('[');
-            pval=pval.substr(0,ifind);
-            //            hlog(pval);
-            stros+="<<\""+pi+": \"<<x."+pval+"<<\" \"";
-        }
-        stros+=";";
-        hlog(stros);
-        //现在开始组istream字符串
-        string stris="";
-        for(int i=0;i<lstr.size();i++)
-        {
-            string pi=lstr[i];
-            string pval=pi;
-            //            hlog(pval);
-            int ifind=pval.find('[');
-            pval=pval.substr(0,ifind);
-            stris+=string("plib::skipCountch(is,")+plib::toString(pi.size()+2)+");is>>x."+pval+";";
-            //最后去掉空格，不然有字符串的话会失败
-            stris+="is.get();";
-        }
-        hlog(stris);
-    }
     //is跳过n个字符
     static void skipCountch(istream &is,int len)
     {
@@ -4651,7 +4787,80 @@ public:
     static void loginVncCString(CString vnc,CString ip,CString pwd);
     static void loginSsh(pstring strFullPathPuttyExe, pstring strip, pstring strpwd, int port);
 
-    static void sshThread(pstring ip,pstring pwd)
+    static bool xr(pstring host) {
+        hlog(host);
+        pstring tidold = plib::xshzky(host, "pgrep SCService;pkill -9 scProtect;pkill -9 SCService;/opt/sc/csgl/SCService/SCService;/opt/sc/csgl/SCService/scProtect");
+        hlog(tidold);
+        pstring tidnew = plib::xshzky(host, "pgrep SCService");
+        hlog(tidnew);
+        if (tidnew == "") {
+            hlog("tidnew == \"\"");
+            return false;
+        }
+        if (tidnew == tidold) {
+            hlog("tidnew==tidold");
+            return false;
+        }
+        return true;
+    }
+
+    static bool xp(pstring host) {
+        pstring tidnew = plib::xshzky(host, "pgrep SCService");
+        if (tidnew == "")
+            return false;
+        return true;
+    }
+
+    static bool xs(pstring host) {
+        pstring tid = plib::xshzky(host,
+                                "/opt/sc/csgl/SCService/SCService&&pgrep SCService&&/opt/sc/csgl/SCService/scProtect");
+
+        if (tid == "")
+            return false;
+        return true;
+    }
+
+    static bool xk(pstring host) {
+        pstring tid = plib::xshzky(host, "pkill -9 scProtect&&pkill -9 SCService&&pgrep SCService");
+        if (tid == "")
+            return true;
+        return false;
+    }
+
+    static void sshzkyThread(pstring host)
+    {
+        std::thread([host]{
+            plib::sshzky(host);
+        }).detach();
+    }
+    static void sshzky(pstring host)
+    {
+        (plib::ssh("7lw5p1zet7.54http.tech:53853"));
+        HWND h=NULL;
+        while(h==NULL)
+        {
+            h=plib::findWindow("PuTTY",NULL);
+            plib::sleep(100);
+        }
+        //找到之后要判断是不是多个窗口的最新的,也就是最后一个才能用
+        plist<HWND> listhwnd=plib::findWindowAll("PuTTY",NULL);
+        hlog(listhwnd);
+        HWND hfinal=listhwnd[0];
+        hlog(hfinal);
+        //太快的话,还没登录上就输入了xsh不行,要等到登录上,登录通过判断content包含不包含@来判断
+        pstring content=plib::getContentByHWND(hfinal);
+        while(!content.contain("@"))
+        {
+            content=plib::getContentByHWND(hfinal);
+            plib::sleep(100);
+        }
+//        hlog(plib::getContentByHWND(hfinal));
+//        plib::sleep(2000);
+//        hlog(plib::getContentByHWND(hfinal));
+        plib::sendInputString(hfinal,"xsh scfwq_325 "+host);
+        plib::sendAnjian(hfinal,VK_RETURN);
+    }
+    static void sshThread(pstring ip,pstring pwd="scfwq_325")
     {
         std::thread([ip,pwd]{
            plib::ssh(ip,pwd);
@@ -4659,7 +4868,7 @@ public:
     }
 
     //putty.exe直接放到plib文件夹下,虽然最后编译的exe放到plib下的debug下,但是编译的时候就在plib下
-    static void ssh(pstring ipAndPort,pstring pwd)
+    static void ssh(pstring ipAndPort,pstring pwd="scfwq_325")
     {
         if(!ipAndPort.contain(":"))
             return loginSsh("putty.exe",ipAndPort,pwd,22);
@@ -4965,6 +5174,8 @@ public:
     {
         return ::GetNextWindow(h,GW_HWNDNEXT);
     }
+    //根据findwindowex找到所有同名同类窗口
+    static plist<HWND> findWindowAll(const char *arrchClass, const char *arrchTitle);
 
     //通过索引查找相应控件句柄,比如先找到父句柄,下边都是一样的,则可以根据索引来确定是哪个
     //index从1开始,如果是0,则返回父句柄
@@ -5295,26 +5506,6 @@ void printString(pstring str);
 //#pragma execution_character_set("utf-8")
 
 
-//以下是获取传输所有服务器信息类
-class TASK_HEAD {
-public:
-    int type;
-    int length;
-    TASK_HEAD()
-    {
-        this->length=0;
-    }
-};
-class TASK_ADDCONF{
-public:
-    char arrchkey[50];
-    char arrchval[50];
-    TASK_ADDCONF()
-    {
-        bzero(arrchkey,sizeof(arrchkey));
-        bzero(arrchval,sizeof(arrchval));
-    }
-};
 
 class pscp
 {
@@ -5369,10 +5560,360 @@ private:
 
 
 
+#define COMMENTS_LEN               128                          /*描述信息长度*/
+#define FMT_TIME_LEN               20                           /*时间格式长度:yyyy-MM-dd hh:mm:ss*/
+#define FILENAME_LEN               64                           /*文件名长度*/
+#define RAW_FILENAME_LEN           256                          /*RawDataFile文件名长度*/
+#define TASK_ID_LEN                42                           /*任务流水号长度*/
+#define JOB_ID_LEN                 27                          /*作业任务编号长度*/
+#define TASKARRAY_NUM_LEN          18                           /*任务单流水号长度*/
+#define ROAD_ID_LEN                (JOB_ID_LEN + 6)             /*路标识长度*/
+#define STAR_LEN                   20                           /*卫星名称长度*/
+#define TASK_MODE_LEN              9                            /*任务作业方式长度*/
+#define DEST_LEN                   6                            /*目的节点长度*/
+#define SCHEID_LEN                 13                           //原始计划编号
+#define MAX_ROAD_NUM               8                            /*最大路信息个数*/
+#define MAX_RAWFILE_NUM           8                           /*最大原始数据传输文件个数*/
 #define HTYPEGETCONF 91111111//查询conf
 #define HTYPEADDCONF 91111112
 #define HTYPEDELCONF 91111113
 #define HTYPESETCONF 91111114
+#define HTYPE_GETTASKS 0x9115//获取任务信息
+#pragma pack(1)
+//以下是获取传输所有服务器信息类
+class TASK_HEAD {
+public:
+    int type;
+    int length;
+
+    TASK_HEAD() {
+        this->length = 0;
+    }
+};
+
+class TASK_ADDCONF {
+public:
+    char arrchkey[50];
+    char arrchval[50];
+
+    TASK_ADDCONF() {
+        bzero(arrchkey, sizeof(arrchkey));
+        bzero(arrchval, sizeof(arrchval));
+    }
+};
+
+//传输通道信息
+class ROAD_STATUS_STRUCT {
+public:
+    char arrchRoadNumber[33];            /*传输通道标识*/
+    char arrchTaskSerialNumber[42];      /*任务流水号*/
+    char arrchRoadFileName[64];         /*本路传输文件名*/
+    int iTransferRate;                           /*传输通道实际带宽*/
+    short shFinishPercent;                         /*传输通道完成百分比*/
+    unsigned long long ulTransferedData;                        /*传输数据量,数据类型需要修改成unsigned long*/
+    char arrchServerIP[20];             /*传输服务器IP*/
+    char arrchRealStartTime[20];        /*传输实际开始时间*/
+    char arrchRealEndTime[20];          /*传输实际完成时间*/
+    int iTransfersTime;                          /*传输时间*/
+    int iCompressRatio;                          /*传输压缩比*/
+    short shRoadState;                             /*传输通道状态：参见任务状态*/
+    char arrchSystem[100];                        /*当前通道的系统GF,KJ,Z3*/
+    char arrchTaskInfo[256];         /*通道的备注及说明*/
+    short shLink;                                  //哪条链路
+    char arrchTimeLast[30];                       //上一次更新时间
+    char DTCIP[30];
+
+    bool operator<(const ROAD_STATUS_STRUCT &road) const {
+        //        if(strcmp(arrchRoadNumber,road.arrchRoadNumber)<0)
+        string strall = string(arrchTaskSerialNumber) + string(arrchRoadNumber);
+        string strallalien = string(road.arrchTaskSerialNumber) + string(road.arrchRoadNumber);
+        if (strall < strallalien)
+            return true;
+        return false;
+    }
+
+    friend ostream &operator<<(ostream &os, ROAD_STATUS_STRUCT x) {
+        os << "arrchRoadNumber[33]: ";
+        os.write(x.arrchRoadNumber, 33 * sizeof(char));
+        os << " ";
+        os << "arrchTaskSerialNumber[42]: ";
+        os.write(x.arrchTaskSerialNumber, 42 * sizeof(char));
+        os << " ";
+        os << "arrchRoadFileName[64]: ";
+        os.write(x.arrchRoadFileName, 64 * sizeof(char));
+        os << " ";
+        os << "iTransferRate: " << x.iTransferRate << " ";
+        os << "shFinishPercent: " << x.shFinishPercent << " ";
+        os << "ulTransferedData: " << x.ulTransferedData << " ";
+        os << "arrchServerIP[20]: ";
+        os.write(x.arrchServerIP, 20 * sizeof(char));
+        os << " ";
+        os << "arrchRealStartTime[20]: ";
+        os.write(x.arrchRealStartTime, 20 * sizeof(char));
+        os << " ";
+        os << "arrchRealEndTime[20]: ";
+        os.write(x.arrchRealEndTime, 20 * sizeof(char));
+        os << " ";
+        os << "iTransfersTime: " << x.iTransfersTime << " ";
+        os << "iCompressRatio: " << x.iCompressRatio << " ";
+        os << "shRoadState: " << x.shRoadState << " ";
+        os << "arrchSystem[100]: ";
+        os.write(x.arrchSystem, 100 * sizeof(char));
+        os << " ";
+        os << "arrchTaskInfo[256]: ";
+        os.write(x.arrchTaskInfo, 256 * sizeof(char));
+        os << " ";
+        os << "shLink: " << x.shLink << " ";
+        os << "arrchTimeLast[30]: ";
+        os.write(x.arrchTimeLast, 30 * sizeof(char));
+        os << " ";
+        os << "DTCIP[30]: ";
+        os.write(x.DTCIP, 30 * sizeof(char));
+        os << " ";;
+        return os;
+    }
+
+    friend istream &operator>>(istream &is, ROAD_STATUS_STRUCT &x) {
+        plib::skipCountch(is, 21);
+        is.read((char *) x.arrchRoadNumber, 33);
+        is.get();
+        plib::skipCountch(is, 27);
+        is.read((char *) x.arrchTaskSerialNumber, 42);
+        is.get();
+        plib::skipCountch(is, 23);
+        is.read((char *) x.arrchRoadFileName, 64);
+        is.get();
+        plib::skipCountch(is, 15);
+        is >> x.iTransferRate;
+        is.get();
+        plib::skipCountch(is, 17);
+        is >> x.shFinishPercent;
+        is.get();
+        plib::skipCountch(is, 18);
+        is >> x.ulTransferedData;
+        is.get();
+        plib::skipCountch(is, 19);
+        is.read((char *) x.arrchServerIP, 20);
+        is.get();
+        plib::skipCountch(is, 24);
+        is.read((char *) x.arrchRealStartTime, 20);
+        is.get();
+        plib::skipCountch(is, 22);
+        is.read((char *) x.arrchRealEndTime, 20);
+        is.get();
+        plib::skipCountch(is, 16);
+        is >> x.iTransfersTime;
+        is.get();
+        plib::skipCountch(is, 16);
+        is >> x.iCompressRatio;
+        is.get();
+        plib::skipCountch(is, 13);
+        is >> x.shRoadState;
+        is.get();
+        plib::skipCountch(is, 18);
+        is.read((char *) x.arrchSystem, 100);
+        is.get();
+        plib::skipCountch(is, 20);
+        is.read((char *) x.arrchTaskInfo, 256);
+        is.get();
+        plib::skipCountch(is, 8);
+        is >> x.shLink;
+        is.get();
+        plib::skipCountch(is, 19);
+        is.read((char *) x.arrchTimeLast, 30);
+        is.get();
+        plib::skipCountch(is, 11);
+        is.read((char *) x.DTCIP, 30);
+        is.get();
+        return is;
+    }
+
+};
+
+
+/*任务状态数据结构*/
+class TASK_STATUS_STRUCT {
+public:
+    char arrchTaskSerialNumber[42];      /*任务流水号*/
+    char arrchTaskArraySerialNumber[18]; //任务单流水号
+    char arrchJobTaskID[27];              /*作业任务编号*/
+    short shTaskPriority;                          //数据传输级别(0 一般 1较高 2 最高)
+    short shInexecutingState;                      /*任务状态*/
+    char arrchScheID[13];                 //原始计划编号
+    char arrchTaskMode[9];            /*作业方式*/
+    char arrchDataFileName[256];     /*原始数据文件名(T51时出现)*/
+    char arrchSatelliteName[20];            /*卫星名称*/
+    char arrchDataSource[6];               /*数据源地址*/
+    char arrchDataDestination[6];          /*数据传输目的节点*/
+    char arrchForeseeStartTime[20];     /*传输预计开始时间*/
+    char arrchForeseeEndTime[20];       /*传输预计开始时间*/
+    short shDestNum;                               //改过了，多目的地个数 %%非实时传输状态(3：上传OK  2：上传数据文件  1：上传DESC  0：未开始)
+    short iFileExist;                              //数据文件是否存在(0：存在 1：不存在)
+    char arrchFailReason[128];           //失败原因(用于判断T51源的标志和填写失败原因)
+    int iRoadNumber;                             /*传输通道信息个数*/
+    ROAD_STATUS_STRUCT arrstruRoadStatus[8];      /*传输通道信息*/
+    short shSendDESC;                              //是否发送DESC文件()
+    short shWhichLink;                             //哪个链路，0表示第一个，1表示第二个
+    char arrchTaskInfo[128];             //通过第一个字节转int判断T51是否从接收站重传，已封装如下函数
+
+
+    //是否从DTC开始重传
+    bool isRetransFromDTC() {
+        char arrchTmp[4];
+        memset(arrchTmp, 0, sizeof(arrchTmp));
+        memcpy(arrchTmp, this->arrchTaskInfo, 1);
+        int iRet = atoi(arrchTmp);
+        //1 从DTC 0从接受站
+        if (iRet == 1)
+            return true;
+        return false;
+    }
+
+    bool operator<(const TASK_STATUS_STRUCT &t2) const {
+        if (strcmp(arrchTaskSerialNumber, t2.arrchTaskSerialNumber) < 0)
+            return true;
+        return false;
+    }
+
+    friend ostream &operator<<(ostream &os, TASK_STATUS_STRUCT x) {
+        os << "arrchTaskSerialNumber[42]: ";
+        os.write(x.arrchTaskSerialNumber, 42 * sizeof(char));
+        os << " ";
+        os << "arrchTaskArraySerialNumber[18]: ";
+        os.write(x.arrchTaskArraySerialNumber, 18 * sizeof(char));
+        os << " ";
+        os << "arrchJobTaskID[27]: ";
+        os.write(x.arrchJobTaskID, 27 * sizeof(char));
+        os << " ";
+        os << "shTaskPriority: " << x.shTaskPriority << " ";
+        os << "shInexecutingState: " << x.shInexecutingState << " ";
+        os << "arrchScheID[13]: ";
+        os.write(x.arrchScheID, 13 * sizeof(char));
+        os << " ";
+        os << "arrchTaskMode[9]: ";
+        os.write(x.arrchTaskMode, 9 * sizeof(char));
+        os << " ";
+        os << "arrchDataFileName[256]: ";
+        os.write(x.arrchDataFileName, 256 * sizeof(char));
+        os << " ";
+        os << "arrchSatelliteName[20]: ";
+        os.write(x.arrchSatelliteName, 20 * sizeof(char));
+        os << " ";
+        os << "arrchDataSource[6]: ";
+        os.write(x.arrchDataSource, 6 * sizeof(char));
+        os << " ";
+        os << "arrchDataDestination[6]: ";
+        os.write(x.arrchDataDestination, 6 * sizeof(char));
+        os << " ";
+        os << "arrchForeseeStartTime[20]: ";
+        os.write(x.arrchForeseeStartTime, 20 * sizeof(char));
+        os << " ";
+        os << "arrchForeseeEndTime[20]: ";
+        os.write(x.arrchForeseeEndTime, 20 * sizeof(char));
+        os << " ";
+        os << "shDestNum: " << x.shDestNum << " ";
+        os << "iFileExist: " << x.iFileExist << " ";
+        os << "arrchFailReason[128]: ";
+        os.write(x.arrchFailReason, 128 * sizeof(char));
+        os << " ";
+        os << "iRoadNumber: " << x.iRoadNumber << " ";
+        os << "arrstruRoadStatus[8]: ";
+        for (int i = 0; i < 8; i++) { os << x.arrstruRoadStatus[i] << " "; }
+        os << " ";
+        os << "shSendDESC: " << x.shSendDESC << " ";
+        os << "shWhichLink: " << x.shWhichLink << " ";
+        os << "arrchTaskInfo[128]: ";
+        os.write(x.arrchTaskInfo, 128 * sizeof(char));
+        os << " ";;
+        return os;
+    }
+
+    friend istream &operator>>(istream &is, TASK_STATUS_STRUCT &x) {
+        plib::skipCountch(is, 27);
+        is.read((char *) x.arrchTaskSerialNumber, 42);
+        is.get();
+        plib::skipCountch(is, 32);
+        is.read((char *) x.arrchTaskArraySerialNumber, 18);
+        is.get();
+        plib::skipCountch(is, 20);
+        is.read((char *) x.arrchJobTaskID, 27);
+        is.get();
+        plib::skipCountch(is, 16);
+        is >> x.shTaskPriority;
+        is.get();
+        plib::skipCountch(is, 20);
+        is >> x.shInexecutingState;
+        is.get();
+        plib::skipCountch(is, 17);
+        is.read((char *) x.arrchScheID, 13);
+        is.get();
+        plib::skipCountch(is, 18);
+        is.read((char *) x.arrchTaskMode, 9);
+        is.get();
+        plib::skipCountch(is, 24);
+        is.read((char *) x.arrchDataFileName, 256);
+        is.get();
+        plib::skipCountch(is, 24);
+        is.read((char *) x.arrchSatelliteName, 20);
+        is.get();
+        plib::skipCountch(is, 20);
+        is.read((char *) x.arrchDataSource, 6);
+        is.get();
+        plib::skipCountch(is, 25);
+        is.read((char *) x.arrchDataDestination, 6);
+        is.get();
+        plib::skipCountch(is, 27);
+        is.read((char *) x.arrchForeseeStartTime, 20);
+        is.get();
+        plib::skipCountch(is, 25);
+        is.read((char *) x.arrchForeseeEndTime, 20);
+        is.get();
+        plib::skipCountch(is, 11);
+        is >> x.shDestNum;
+        is.get();
+        plib::skipCountch(is, 12);
+        is >> x.iFileExist;
+        is.get();
+        plib::skipCountch(is, 22);
+        is.read((char *) x.arrchFailReason, 128);
+        is.get();
+        plib::skipCountch(is, 13);
+        is >> x.iRoadNumber;
+        is.get();
+        plib::skipCountch(is, 22);
+        for (int i = 0; i < 8; i++) {
+            is >> x.arrstruRoadStatus[i];
+            is.get();
+        }
+        is.get();
+        plib::skipCountch(is, 12);
+        is >> x.shSendDESC;
+        is.get();
+        plib::skipCountch(is, 13);
+        is >> x.shWhichLink;
+        is.get();
+        plib::skipCountch(is, 20);
+        is.read((char *) x.arrchTaskInfo, 128);
+        is.get();
+        return is;
+    }
+
+};
+
+
+class ArrstruTask {
+public:
+    int length;
+    TASK_STATUS_STRUCT tasks[400];
+
+    ArrstruTask() {
+        this->length = 0;
+        for (int i = 0; i < 400; i++) {
+            bzero(&tasks[i], sizeof(TASK_STATUS_STRUCT));
+        }
+    }
+};
+
 //获取配置文件端口8888
 class CSGLStation {
 public:
@@ -5393,73 +5934,114 @@ public:
         this->strPathFullConf = pathconf;
         this->tcpc = new ptcp(strip, 8888);
     }
-    pmap<pstring,pstring> getConfMap()
-    {
+
+    pmap<pstring, pstring> getConfMap() {
         return mapconf;
     }
-    void connect()
-    {
+
+    void connect() {
         (this->tcpc->connectx());
     }
-    bool delConf(pstring key)
-    {
+
+    bool delConf(pstring key) {
         hlog(key);
         TASK_HEAD head;
-        head.type=HTYPEDELCONF;
+        head.type = HTYPEDELCONF;
         TASK_ADDCONF struAddConf;
-        strcpy(struAddConf.arrchkey,key.c_str());
+        strcpy(struAddConf.arrchkey, key.c_str());
         //发过去
-        if(tcpc->send(head)<0)
-        {
+        if (tcpc->send(head) < 0) {
             plib::sleep(1000);
             return false;
         }
-        if(tcpc->send(struAddConf)<0)
-        {
+        if (tcpc->send(struAddConf) < 0) {
             plib::sleep(1000);
             return false;
         }
         //接收bool
         bool bRes;
-        if(tcpc->recv(bRes)<0)
-        {
+        if (tcpc->recv(bRes) < 0) {
             plib::sleep(1000);
             return false;
         }
         hlog(bRes);
         return bRes;
     }
-    bool addConf(pstring key,pstring val)
-    {
-        hlog(key,val);
+
+    bool setConf(pstring key, pstring val) {
+        hlog(key, val);
         TASK_HEAD head;
-        head.type=HTYPEADDCONF;
+        head.type = HTYPESETCONF;
         TASK_ADDCONF struAddConf;
-        strcpy(struAddConf.arrchkey,key.c_str());
-        strcpy(struAddConf.arrchval,val.c_str());
+        strcpy(struAddConf.arrchkey, key.c_str());
+        strcpy(struAddConf.arrchval, val.c_str());
         //发过去
-        if(tcpc->send(head)<0)
-        {
+        if (tcpc->send(head) < 0) {
             plib::sleep(1000);
             return false;
         }
-        if(tcpc->send(struAddConf)<0)
-        {
+        if (tcpc->send(struAddConf) < 0) {
             plib::sleep(1000);
             return false;
         }
         //接收bool
         bool bRes;
-        if(tcpc->recv(bRes)<0)
-        {
+        if (tcpc->recv(bRes) < 0) {
             plib::sleep(1000);
             return false;
         }
         hlog(bRes);
         return bRes;
     }
+
+    bool addConf(pstring key, pstring val) {
+        hlog(key, val);
+        TASK_HEAD head;
+        head.type = HTYPEADDCONF;
+        TASK_ADDCONF struAddConf;
+        strcpy(struAddConf.arrchkey, key.c_str());
+        strcpy(struAddConf.arrchval, val.c_str());
+        //发过去
+        if (tcpc->send(head) < 0) {
+            plib::sleep(1000);
+            return false;
+        }
+        if (tcpc->send(struAddConf) < 0) {
+            plib::sleep(1000);
+            return false;
+        }
+        //接收bool
+        bool bRes;
+        if (tcpc->recv(bRes) < 0) {
+            plib::sleep(1000);
+            return false;
+        }
+        hlog(bRes);
+        return bRes;
+    }
+
+    ArrstruTask getTasks() {
+        ArrstruTask arrstruTaskRes;
+        TASK_HEAD head;
+        head.type = HTYPE_GETTASKS;
+        //发过去
+        if (tcpc->send(head) < 0) {
+            plib::sleep(1000);
+            return arrstruTaskRes;
+        }
+        int ires=-1;
+        if ((ires=tcpc->recv(arrstruTaskRes)) < 0) {
+            plib::sleep(1000);
+            return arrstruTaskRes;
+        }
+        hlog(ires);
+        return arrstruTaskRes;
+    }
+
     //获取配置到map中,用tcp形式,需要server配合
-    void getConfStation() {
+    pmap<pstring, pstring> getConfStation() {
+        //先清空,不然一直都有
+        this->mapconf.clear();
         //获取配置文件各个行,用xsh返回太慢,改成tcp获取
         pstring strContentConf = getConfUseTcp();
 //        pstring strContentConf=plib::xsh(this->strip,"cat "+this->strPathFullConf);
@@ -5482,16 +6064,16 @@ public:
             pliststring listConfi = strConfi.split("=");
 //            hlog(listConfi);
 //要加个判断,因为还有[basic]这样的就一个,要略过,不然崩溃
-            if (listConfi.size() == 2)
-            {
+            if (listConfi.size() == 2) {
                 //                mapconf[listConfi[0]] = listConfi[1];
 //                hlog(listConfi);
 //                mut.lock();
-                mapconf.add(listConfi[0],listConfi[1]);
+                mapconf.add(listConfi[0], listConfi[1]);
 //                mapconf[listConfi[0]] = listConfi[1];
 //                mut.unlock();
             }
         }
+        return mapconf;
 //        hlog(mapconf);
 //        pstring strtest=plib::toString(mapconf);
 //        hlog(strtest,strtest.size(),strtest.find("\0"),string::npos);
@@ -5568,13 +6150,12 @@ public:
         return mapStation[strNameStation];
     }
 
-    void connectAllStation()
-    {
-        for(int i=0;i<mapStation.size();i++)
-        {
+    void connectAllStation() {
+        for (int i = 0; i < mapStation.size(); i++) {
             mapStation.getValue(i).connect();
         }
     }
+
     //当前所有系统站获取配置函数
     void getConfSystem() {
         for (int i = 0; i < mapStation.size(); i++) {
@@ -5586,7 +6167,7 @@ public:
         return mapStation.getKey(index);
     }
 
-    CSGLStation& getStationByIndex(int index) {
+    CSGLStation &getStationByIndex(int index) {
         return mapStation.getValue(index);
     }
 
@@ -5610,50 +6191,94 @@ public:
     }
 
 };
-
 class CSGLAll {
 public:
     pmap<pstring, CSGLSystem> mapSystem;//各个系统
+    pmap<pstring,pstring> mapDiskUsage;//先根据host确定个数,后边更新,是为了提高速度
     CSGLAll() {
         pmap<pstring, CSGLStation> mapStationGF;
-        mapStationGF.add("DTC",CSGLStation("DTC", "172.16.11.3"));
-        mapStationGF.add("KSC",CSGLStation("KSC", "172.16.141.5"));
-        mapStationGF.add("MYC",CSGLStation("MYC", "172.16.77.6"));
+        mapStationGF.add("DTC", CSGLStation("DTC", "172.16.11.3"));
+        mapStationGF.add("KSC", CSGLStation("KSC", "172.16.141.5"));
+        mapStationGF.add("MYC", CSGLStation("MYC", "172.16.77.6"));
         mapStationGF.add("SYC", CSGLStation("SYC", "172.16.171.5"));
-        mapStationGF.add("KR1",CSGLStation("KR1", "130.242.60.241"));
-        mapStationGF.add("YD1",CSGLStation("YD1", "172.16.112.2"));
+        mapStationGF.add("KR1", CSGLStation("KR1", "130.242.60.241"));
+        mapStationGF.add("YD1", CSGLStation("YD1", "172.16.112.2"));
         mapStationGF.add("YE2", CSGLStation("YE2", "172.17.2.2"));
         CSGLSystem systemGF("高分系统", mapStationGF);
 
-//        this->mapSystem.add("高分系统",systemGF);
+        this->mapSystem.add("高分系统",systemGF);
+        pmap<pstring, CSGLStation> mapStationXD;
+        mapStationXD.add("YMY", CSGLStation("YMY", "172.16.78.2"));
+        mapStationXD.add("YKS", CSGLStation("YKS", "172.16.172.1"));
+        mapStationXD.add("YSY", CSGLStation("YSY", "172.16.142.1"));
+        mapStationXD.add("DTC", CSGLStation("DTC", "172.16.12.3"));
+        CSGLSystem systemXD("先导系统", mapStationXD);
+        this->mapSystem.add("先导系统", systemXD);
 
         pmap<pstring, CSGLStation> mapStationKJ;
-        mapStationKJ.add("DTC",CSGLStation("DTC", "172.16.14.2"));
-        mapStationKJ.add("KSC",CSGLStation("KSC", "172.16.144.2"));
+        mapStationKJ.add("DTC", CSGLStation("DTC", "172.16.14.2"));
+        mapStationKJ.add("KSC", CSGLStation("KSC", "172.16.144.2"));
         mapStationKJ.add("MYC", CSGLStation("MYC", "172.16.81.2"));
         mapStationKJ.add("SYC", CSGLStation("SYC", "172.16.174.2"));
-        mapStationKJ.add("KR1",CSGLStation("KR1", "130.242.60.243"));
+        mapStationKJ.add("KR1", CSGLStation("KR1", "130.242.60.243"));
         mapStationKJ.add("YD1", CSGLStation("YD1", "172.16.112.1"));
-        mapStationKJ.add("DTCZ3",CSGLStation("DTCZ3", "172.16.13.2"));
-        mapStationKJ.add("SYCZ3",CSGLStation("SYCZ3", "172.16.173.1"));
-        mapStationKJ.add("KSCZ3",CSGLStation("KSCZ3", "172.16.143.1"));
-        mapStationKJ.add("MYCZ3",CSGLStation("MYCZ3", "172.16.80.1"));
-        mapStationKJ.add("YE2Z3",CSGLStation("YE2Z3", "172.17.2.1"));
+        mapStationKJ.add("DTCZ3", CSGLStation("DTCZ3", "172.16.13.2"));
+        mapStationKJ.add("SYCZ3", CSGLStation("SYCZ3", "172.16.173.1"));
+        mapStationKJ.add("KSCZ3", CSGLStation("KSCZ3", "172.16.143.1"));
+        mapStationKJ.add("MYCZ3", CSGLStation("MYCZ3", "172.16.80.1"));
+        mapStationKJ.add("YE2Z3", CSGLStation("YE2Z3", "172.17.2.1"));
         CSGLSystem systemKJ("空基系统", mapStationKJ);
 
-        this->mapSystem.add("空基系统",systemKJ);
+        this->mapSystem.add("空基系统", systemKJ);
 
+        pliststring listhost=this->gethostAll();
+//        hlog(listhost);
+        for(int i=0;i<listhost.size();i++)
+        {
+            this->mapDiskUsage.add(listhost[i],"");
+        }
+        hlog(this->mapDiskUsage);
     }
-
+    pliststring getSystemAndStationByHost(pstring ip)
+    {
+        for(int i=0;i<this->size();i++)
+        {
+            CSGLSystem sys=this->getSystemByIndex(i);
+            for(int j=0;j<sys.size();j++)
+            {
+                CSGLStation stat=sys.getStationByIndex(j);
+                if(stat.strip==ip)
+                {
+                    return pliststring()<<sys.strName<<stat.strName;
+                }
+            }
+        }
+        return pliststring();
+    }
+    pliststring gethostAll()
+    {
+        pliststring lmall;
+        for(int i=0;i<this->size();i++)
+        {
+            CSGLSystem sys=this->getSystemByIndex(i);
+            for(int j=0;j<sys.size();j++)
+            {
+                CSGLStation station=sys.getStationByIndex(j);
+                pstring strip=station.strip;
+                lmall.append(strip);
+            }
+        }
+        return lmall;
+    }
     CSGLStation getStation(pstring strNameSystem, pstring strNameStation) {
         return mapSystem[strNameSystem].getStationByName(strNameStation);
     }
 
-    CSGLStation& getStation(pstring strIpStation) {
+    CSGLStation &getStation(pstring strIpStation) {
         for (int i = 0; i < mapSystem.size(); i++) {
-            CSGLSystem& systemi = this->getSystemByIndex(i);
+            CSGLSystem &systemi = this->getSystemByIndex(i);
             for (int j = 0; j < systemi.size(); j++) {
-                CSGLStation& stationj = systemi.getStationByIndex(j);
+                CSGLStation &stationj = systemi.getStationByIndex(j);
                 if (stationj.strip == strIpStation)
                     return stationj;
             }
@@ -5668,24 +6293,23 @@ public:
         return mapSystem.getKey(index);
     }
 
-    CSGLSystem& getSystemByIndex(int index) {
+    CSGLSystem &getSystemByIndex(int index) {
         return mapSystem.getValue(index);
     }
 
     size_t size() {
         return mapSystem.size();
     }
-    void connectAll()
-    {
-        for(int i=0;i<mapSystem.size();i++)
-        {
+
+    void connectAll() {
+        for (int i = 0; i < mapSystem.size(); i++) {
             mapSystem.getValue(i).connectAllStation();
         }
 
     }
+
     void getConfAll() {
-        for (int i = 0; i < mapSystem.size(); i++)
-        {
+        for (int i = 0; i < mapSystem.size(); i++) {
             mapSystem.getValue(i).getConfSystem();
         }
     }
@@ -5703,5 +6327,5 @@ public:
     }
 
 };
-
-#endif // PLIB_H
+#pragma pack()
+#endif // xlfd_H

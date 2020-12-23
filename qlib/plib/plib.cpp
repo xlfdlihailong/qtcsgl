@@ -885,20 +885,22 @@ string  plib::hostToIp(const char *url)
     int ret;
     ret = WSAStartup(0x0202, &wsaData);
     if(ret) {
-        printf("error in WSAStartup: %d\n", WSAGetLastError());
+//        printf("error in WSAStartup: %d\n", WSAGetLastError());
+        hlog(WSAGetLastError());
         return 0;
     }
 
     host = gethostbyname(url);
     if(host == NULL) {
-
-        printf("error in gethostbyname: %d\n", WSAGetLastError());
+            hlog(WSAGetLastError());
+//        printf("error in gethostbyname: %d\n", WSAGetLastError());
         return "";
     } else {
-        printf("name: %s\naddrtype; %d\naddrlength: %d\n",
-               host->h_name, host->h_addrtype, host->h_length);
-        printf("ip address: %s\n",
-               ip=inet_ntoa(*(struct in_addr*)host->h_addr_list[0]));
+//        printf("name: %s\naddrtype; %d\naddrlength: %d\n",
+//               host->h_name, host->h_addrtype, host->h_length);
+//        printf("ip address: %s\n",
+//               ip=inet_ntoa(*(struct in_addr*)host->h_addr_list[0]));
+        ip=inet_ntoa(*(struct in_addr*)host->h_addr_list[0]);
     }
     WSACleanup();
     return string(ip);
@@ -1360,6 +1362,30 @@ HWND plib::findWindow(const char *arrchClass,const char *arrchTitle)
 HWND plib::findWindowEx(HWND hparent, HWND hchildafter, const char *arrchClass, const char *arrchTitle)
 {
     return ::FindWindowExA(hparent,hchildafter,arrchClass,arrchTitle);
+}
+
+plist<HWND> plib::findWindowAll(const char *arrchClass, const char *arrchTitle)
+{
+    plist<HWND> listhwnd;
+    HWND h=plib::findWindowEx(NULL,NULL,arrchClass,arrchTitle);
+    if(h==NULL)
+        return listhwnd;
+    listhwnd.append(h);
+    HWND hnext=h;
+    while(1)
+    {
+        hnext=plib::findWindowEx(NULL,hnext,arrchClass,arrchTitle);
+        if(hnext==NULL)
+        {
+            break;
+        }
+        else
+        {
+//            hlog(hnext);
+            listhwnd.append(hnext);
+        }
+    }
+    return listhwnd;
 }
 
 string plib::getContentByHWND(HWND h)

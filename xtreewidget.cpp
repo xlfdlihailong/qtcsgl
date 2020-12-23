@@ -35,12 +35,13 @@ xTreeWidget::xTreeWidget(QWidget *parent) :
     {
 
         CSGLSystem sys=csall.getSystemByIndex(i);
-        this->addRoot(sys.strName.c_str());
+        hlog(sys);
+        auto prooti=this->addRoot(sys.strName.c_str());
         for(int j=0;j<sys.size();j++)
         {
             CSGLStation stationj=sys.getStationByIndex(j);
             auto jointj=this->newJoint(stationj.strName.c_str());
-            this->root()->addChild(jointj);
+            prooti->addChild(jointj);
         }
     }
     ui->treeWidget->expandAll();
