@@ -10,6 +10,12 @@
     <height>781</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>DejaVu Sans Mono</family>
+    <pointsize>12</pointsize>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
@@ -36,6 +42,11 @@
        <width>55</width>
        <height>55</height>
       </size>
+     </property>
+     <property name="font">
+      <font>
+       <family>DejaVu Sans Mono</family>
+      </font>
      </property>
      <property name="wordWrap">
       <bool>false</bool>

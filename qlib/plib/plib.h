@@ -1803,11 +1803,17 @@ public:
             this->at(key)=val;
         }
     }
-    //这个改造是使map[key].可提示,并且没有key时不再插入,插入统一用add
+    //这个改造是使map[key].可提示,并且没有key时返回0,插入统一用add
     //便于维护列表
     T2 &operator[](T1 key) {
-        assert(this->containsKey(key));
-        return (T2 &) (this->at(key));
+//        assert(this->containsKey(key));
+        if(containsKey(key))
+            return (T2 &) (this->at(key));
+        else
+        {
+            T2 t2;
+            return t2;
+        }
     }
 
 
@@ -6205,8 +6211,8 @@ public:
         mapStationGF.add("YD1", CSGLStation("YD1", "172.16.112.2"));
         mapStationGF.add("YE2", CSGLStation("YE2", "172.17.2.2"));
         CSGLSystem systemGF("高分系统", mapStationGF);
+//        this->mapSystem.add("高分系统",systemGF);
 
-        this->mapSystem.add("高分系统",systemGF);
         pmap<pstring, CSGLStation> mapStationXD;
         mapStationXD.add("YMY", CSGLStation("YMY", "172.16.78.2"));
         mapStationXD.add("YKS", CSGLStation("YKS", "172.16.172.1"));
@@ -6228,8 +6234,7 @@ public:
         mapStationKJ.add("MYCZ3", CSGLStation("MYCZ3", "172.16.80.1"));
         mapStationKJ.add("YE2Z3", CSGLStation("YE2Z3", "172.17.2.1"));
         CSGLSystem systemKJ("空基系统", mapStationKJ);
-
-        this->mapSystem.add("空基系统", systemKJ);
+//        this->mapSystem.add("空基系统", systemKJ);
 
         pliststring listhost=this->gethostAll();
 //        hlog(listhost);

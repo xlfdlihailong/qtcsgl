@@ -89,7 +89,7 @@ xTableWidget::xTableWidget(QWidget *parent) :
     //    //封装设置表头字体为楷体14号最好看
     QHeaderView* pheader=ui->tableWidget->horizontalHeader();
     //    pheader->setStyleSheet("QHeaderView::section{background-color:rgb(40,143,218);font:14pt 'DejaVu Sans Mono';color: white;};");
-    //     pheader->setStyleSheet("QHeaderView::section{font:12pt 'DejaVu Sans Mono';};");
+         pheader->setStyleSheet("QHeaderView::section{font:bold 12pt 'DejaVu Sans Mono';};");
     //         pheader->setStyleSheet("QHeaderView::section{font:bold 10pt 'DejaVu Sans Mono';};");
 //    pheader->setStyleSheet("QHeaderView::section{font:bold 10pt '楷体';};");
 
@@ -378,6 +378,10 @@ void xTableWidget::setItemText(int i, int j, QString str)
         //        qDebug()<<"###############";
         //不存在，新建
         pItemStr=new QTableWidgetItem(str);
+        QFont font;
+        font.setFamily(QStringLiteral("DejaVu Sans Mono"));
+        font.setPointSize(12);
+        pItemStr->setFont(font);
         //居中
         //        pItemStr->setTextAlignment(Qt::AlignCenter);//暂时不居中
         ui->tableWidget->setItem(i,j,pItemStr);

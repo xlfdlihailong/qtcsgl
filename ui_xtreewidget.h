@@ -31,6 +31,10 @@ public:
         if (xTreeWidget->objectName().isEmpty())
             xTreeWidget->setObjectName(QStringLiteral("xTreeWidget"));
         xTreeWidget->resize(751, 640);
+        QFont font;
+        font.setFamily(QStringLiteral("DejaVu Sans Mono"));
+        font.setPointSize(12);
+        xTreeWidget->setFont(font);
         verticalLayout = new QVBoxLayout(xTreeWidget);
         verticalLayout->setSpacing(0);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));

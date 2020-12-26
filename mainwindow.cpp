@@ -6,10 +6,33 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    setWindowState(Qt::WindowMaximized);
     this->setWindowTitle("传输系统总控监控by李海龙");
-    hlog("发生的氛围");
-    ui->ptable->setHeaderText(QStringList()<<"配置项"<<"值");
+    mapconf.add("IP_LOCAL","本机地址");
+    mapconf.add("AGENT_NUM","传输代理服务器个数");
+    mapconf.add("AGENT_IP1","传输代理服务器地址1");
+    mapconf.add("AGENT_IP2","传输代理服务器地址2");
+    mapconf.add("AGENT_IP3","传输代理服务器地址3");
+    mapconf.add("AGENT_IP4","传输代理服务器地址4");
+    mapconf.add("AGENT_IP5","传输代理服务器地址5");
+    mapconf.add("AGENT_IP6","传输代理服务器地址6");
+    mapconf.add("AGENT_IP7","传输代理服务器地址7");
+    mapconf.add("AGENT_IP8","传输代理服务器地址8");
+    mapconf.add("AGENT_IP9","传输代理服务器地址9");
+    mapconf.add("SYSTEM_TONGYI","本系统与哪个系统是统一带宽分配,这个决定了本系统和哪个系统要一起分配带宽,如果不需要统一带宽分配,则不要配这个参数就可以了");
+    mapconf.add("SYSTEM","本站属于哪个系统");
+    mapconf.add("NORMAL_PERCENT","带宽分配算法中的加权平均算法中的中优先级所占中低带宽的比例,加权平均算法仅在中优先级任务中有非实时且有低优先级任务的情况下才会触发");
+    mapconf.add("FILE_DEADLINE","传输数据文件保存期限,单位为天");
+    mapconf.add("FAST_MODE","传输模式,0为非快速传输,1为快速传输,非快速传输指非实时任务总控要等到找到OK文件才给传输代理发送任务,而快速传输总控只要找到DESC文件就会给传输代理发送任务");
+    mapconf.add("FILE_SAVE_PATH","实时任务数据存储路径");
+    mapconf.add("WORK_PATH","非实时任务数据存储路径");
+    mapconf.add("DISK_USAGE","传输数据目录所在磁盘最高占用率,当磁盘使用超过该值时,总控会自动删除过期实时和非实时数据以释放空间保证磁盘充足");
+    mapconf.add("SCSERVICE_UDP_PORT","总控服务与传输代理的UDP单播通信端口");
+
+
+    ui->ptable->setHeaderText(QStringList()<<"配置项"<<"值"<<"描述");
     ui->ptable->setColWidth(0,400);
+    ui->ptable->setColWidth(1,300);
     connect(ui->ptree,SIGNAL(sigTransSystemNameAndStationName(pstring,pstring)),this,SLOT(slotClickTree(pstring,pstring)));
     connect(this,SIGNAL(sigShowStatusBar(QString,int)),ui->statusBar,SLOT(showMessage(QString,int)));
 
@@ -70,6 +93,8 @@ MainWindow::MainWindow(QWidget *parent) :
                 <<"执行状态"<<"预计开始时间");
     ui->ptableTask->setColWidth("作业任务编号",200);
     ui->ptablejk->setHeaderText(QStringList()<<"服务器信息"<<"根目录占用"<<"总控状态"<<"总控cpu占用"<<"总控内存占用");
+    ui->ptablejk->setColWidth("服务器信息",300);
+    ui->ptablejk->setColWidth("总控cpu占用",150);
     std::thread (&MainWindow::slotThreadGetRootDiskUsage,this).detach();
     connect(this,SIGNAL(sigMessageBox(QString)),this,SLOT(slotMessageBox(QString)));
 
@@ -170,7 +195,7 @@ void MainWindow::slotSSH()
     pstring strIPStation=strinfo.split(" ").getDataEnd();
     hlog(strIPStation);
     hlog(plib::pwd());
-//    plib::sshThread(strIPStation);
+    //    plib::sshThread(strIPStation);
     plib::sshzkyThread(strIPStation);
 }
 
@@ -186,19 +211,19 @@ void MainWindow::slotThreadStopSC()
     pstring strIPStation=strinfo.split(" ").getDataEnd();
     hlog(strIPStation);
 
-//    //向该ip发送查询配置信息
-//    if(ptcpControlSC->sendx("stopSC",strIPStation)<0)
-//    {
-//        sigShowStatusBar("发送停止总控信息失败,与服务器连接断开,请重试 "+qlib::toString(plib::getTimeNow()));
-//        return;
-//    }
-//    if(ptcpControlSC->recvx(3)<0)
-//    {
-//        sigShowStatusBar("接收停止总控数据失败,与服务器连接断开,请重试 "+qlib::toString(plib::getTimeNow()));
-//        return;
-//    }
-//    sigShowStatusBar("接收停止总控结果成功");
-//    bool bres=ptcpControlSC->getClass<bool>();
+    //    //向该ip发送查询配置信息
+    //    if(ptcpControlSC->sendx("stopSC",strIPStation)<0)
+    //    {
+    //        sigShowStatusBar("发送停止总控信息失败,与服务器连接断开,请重试 "+qlib::toString(plib::getTimeNow()));
+    //        return;
+    //    }
+    //    if(ptcpControlSC->recvx(3)<0)
+    //    {
+    //        sigShowStatusBar("接收停止总控数据失败,与服务器连接断开,请重试 "+qlib::toString(plib::getTimeNow()));
+    //        return;
+    //    }
+    //    sigShowStatusBar("接收停止总控结果成功");
+    //    bool bres=ptcpControlSC->getClass<bool>();
     bool bres=plib::xk(strIPStation);
     hlog(bres);
     if(bres)
@@ -219,19 +244,19 @@ void MainWindow::slotThreadStartSC()
     pstring strIPStation=strinfo.split(" ").getDataEnd();
     hlog(strIPStation);
 
-//    //向该ip发送查询配置信息
-//    if(ptcpControlSC->sendx("startSC",strIPStation)<0)
-//    {
-//        sigShowStatusBar("发送启动总控信息失败,与服务器连接断开,请重试 "+qlib::toString(plib::getTimeNow()));
-//        return;
-//    }
-//    if(ptcpControlSC->recvx(3)<0)
-//    {
-//        sigShowStatusBar("接收启动总控数据失败,与服务器连接断开,请重试 "+qlib::toString(plib::getTimeNow()));
-//        return;
-//    }
-//    sigShowStatusBar("接收启动总控结果成功");
-//    bool bres=ptcpControlSC->getClass<bool>();
+    //    //向该ip发送查询配置信息
+    //    if(ptcpControlSC->sendx("startSC",strIPStation)<0)
+    //    {
+    //        sigShowStatusBar("发送启动总控信息失败,与服务器连接断开,请重试 "+qlib::toString(plib::getTimeNow()));
+    //        return;
+    //    }
+    //    if(ptcpControlSC->recvx(3)<0)
+    //    {
+    //        sigShowStatusBar("接收启动总控数据失败,与服务器连接断开,请重试 "+qlib::toString(plib::getTimeNow()));
+    //        return;
+    //    }
+    //    sigShowStatusBar("接收启动总控结果成功");
+    //    bool bres=ptcpControlSC->getClass<bool>();
     bool bres=plib::xs(strIPStation);
     hlog(bres);
     if(bres)
@@ -253,19 +278,19 @@ void MainWindow::slotThreadRestartSC()
     pstring strIPStation=strinfo.split(" ").getDataEnd();
     hlog(strIPStation);
 
-//    //向该ip发送查询配置信息
-//    if(ptcpControlSC->sendx("restartSC",strIPStation)<0)
-//    {
-//        sigShowStatusBar("发送重启总控信息失败,与服务器连接断开,请重试 "+qlib::toString(plib::getTimeNow()));
-//        return;
-//    }
-//    if(ptcpControlSC->recvx(3)<0)
-//    {
-//        sigShowStatusBar("接收重启总控数据失败,与服务器连接断开,请重试 "+qlib::toString(plib::getTimeNow()));
-//        return;
-//    }
-//    sigShowStatusBar("接收重启总控结果成功");
-//    bool bres=ptcpControlSC->getClass<bool>();
+    //    //向该ip发送查询配置信息
+    //    if(ptcpControlSC->sendx("restartSC",strIPStation)<0)
+    //    {
+    //        sigShowStatusBar("发送重启总控信息失败,与服务器连接断开,请重试 "+qlib::toString(plib::getTimeNow()));
+    //        return;
+    //    }
+    //    if(ptcpControlSC->recvx(3)<0)
+    //    {
+    //        sigShowStatusBar("接收重启总控数据失败,与服务器连接断开,请重试 "+qlib::toString(plib::getTimeNow()));
+    //        return;
+    //    }
+    //    sigShowStatusBar("接收重启总控结果成功");
+    //    bool bres=ptcpControlSC->getClass<bool>();
     bool bres=plib::xr(strIPStation);
     hlog(bres);
     if(bres)
@@ -290,15 +315,15 @@ void MainWindow::slotThreadGetRootDiskUsage()
         //向该ip发送查询配置信息
         if(tcp.sendx("getDiskUsage")<0)
         {
-            sigShowStatusBar("发送配置查询信息失败,与服务器连接断开,请重试 "+qlib::toString(plib::getTimeNow()));
+            sigShowStatusBar("发送根目录占用查询信息失败,与服务器连接断开,请重试 "+qlib::toString(plib::getTimeNow()));
             return;
         }
         if(tcp.recvx(3)<0)
         {
-            sigShowStatusBar("接收配置信息数据失败,与服务器连接断开,请重试 "+qlib::toString(plib::getTimeNow()));
+            sigShowStatusBar("接收根目录占用数据失败,与服务器连接断开,请重试 "+qlib::toString(plib::getTimeNow()));
             return;
         }
-        sigShowStatusBar("接收数据成功");
+        sigShowStatusBar("接收根目录占用数据成功");
 
 
         pmap<pstring,pliststring>  mapHostAndDiskUsage=tcp.getClass<pmap<pstring,pliststring>>();
@@ -313,7 +338,7 @@ void MainWindow::slotThreadGetRootDiskUsage()
             pstring keyres=gallcsgl.getSystemAndStationByHost(key).join("  ")+"  "+key;
             pliststring val=mapHostAndDiskUsage.getValue(i);
 
-//            hlog(val);
+            //            hlog(val);
             pliststring lres;
             lres.append(keyres);
             for(int j=0;j<val.size();j++)
@@ -338,12 +363,12 @@ void MainWindow::slotGetConf()
         sigShowStatusBar("发送配置查询信息失败,与服务器连接断开,请重试 "+qlib::toString(plib::getTimeNow()));
         return;
     }
-    if(ptc->recvx(1)<0)
+    if(ptc->recvx(3)<0)
     {
         sigShowStatusBar("接收配置信息数据失败,与服务器连接断开,请重试 "+qlib::toString(plib::getTimeNow()));
         return;
     }
-    sigShowStatusBar("接收数据成功");
+    sigShowStatusBar("接收配置信息数据成功");
 
 
     pmap<pstring,pstring>  mapConfStation=ptc->getClass<pmap<pstring,pstring>>();
@@ -356,19 +381,21 @@ void MainWindow::slotGetConf()
     {
         pstring key=mapConfStation.getKey(i);
         pstring val=mapConfStation.getValue(i);
+        pstring info=this->mapconf[key];
 
         //根据key包含查询,key先转小写,条件也转小写
         pstring strkeyLower=key.toLower();
+        pstring strInfoLower=info.toLower();
         //        hlog(strkeyLower);
         pstring strCondLower=pstring(this->strConditionConf.toStdString()).toLower();
         //        hlog(strCondLower);
         if(strCondLower!="")
         {
-            if(strkeyLower.contain(strCondLower))
-                lmresConf.append(pliststring()<<key<<val);
+            if(strkeyLower.contain(strCondLower)||strInfoLower.contain(strCondLower))
+                lmresConf.append(pliststring()<<key<<val<<info);
         }
         else
-            lmresConf.append(pliststring()<<key<<val);
+            lmresConf.append(pliststring()<<key<<val<<info);
     }
 
     sigUpdateTable(lmresConf,0);

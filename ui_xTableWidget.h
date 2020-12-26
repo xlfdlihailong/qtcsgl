@@ -31,6 +31,10 @@ public:
         if (Form->objectName().isEmpty())
             Form->setObjectName(QStringLiteral("Form"));
         Form->resize(1345, 781);
+        QFont font;
+        font.setFamily(QStringLiteral("DejaVu Sans Mono"));
+        font.setPointSize(12);
+        Form->setFont(font);
         horizontalLayout = new QHBoxLayout(Form);
         horizontalLayout->setSpacing(0);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
@@ -38,6 +42,9 @@ public:
         tableWidget = new QTableWidget(Form);
         tableWidget->setObjectName(QStringLiteral("tableWidget"));
         tableWidget->setMinimumSize(QSize(55, 55));
+        QFont font1;
+        font1.setFamily(QStringLiteral("DejaVu Sans Mono"));
+        tableWidget->setFont(font1);
         tableWidget->setWordWrap(false);
         tableWidget->setColumnCount(0);
 

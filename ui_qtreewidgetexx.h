@@ -27,6 +27,10 @@ public:
         if (QTreeWidgetExx->objectName().isEmpty())
             QTreeWidgetExx->setObjectName(QStringLiteral("QTreeWidgetExx"));
         QTreeWidgetExx->resize(400, 300);
+        QFont font;
+        font.setFamily(QStringLiteral("DejaVu Sans Mono"));
+        font.setPointSize(12);
+        QTreeWidgetExx->setFont(font);
 
         retranslateUi(QTreeWidgetExx);
 

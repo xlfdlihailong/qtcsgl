@@ -17,6 +17,7 @@ public:
     pmap<pstring,ptcp*> mapHostTcp;
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    pmap<pstring,pstring> mapconf;//配置项的详细解释
     ptcp* ptcpControlSC=NULL;//专门控制总控重启停止开始查询的ptcp,因为重复会导致数据失败
     QString strTabNow="";
     CSGLAll gallcsgl;

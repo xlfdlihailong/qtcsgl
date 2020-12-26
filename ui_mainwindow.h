@@ -42,6 +42,7 @@ public:
     QVBoxLayout *verticalLayout;
     QHBoxLayout *horizontalLayout_3;
     QLabel *label_host;
+    QLabel *label_host_2;
     QLineEdit *lineEditQuery;
     QPushButton *pushButtonAddConf;
     xTableWidget *ptable;
@@ -59,8 +60,15 @@ public:
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
         MainWindow->resize(1582, 976);
+        QFont font;
+        font.setFamily(QStringLiteral("DejaVu Sans Mono"));
+        font.setPointSize(12);
+        MainWindow->setFont(font);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
+        QFont font1;
+        font1.setPointSize(12);
+        centralWidget->setFont(font1);
         horizontalLayout_2 = new QHBoxLayout(centralWidget);
         horizontalLayout_2->setSpacing(6);
         horizontalLayout_2->setContentsMargins(11, 11, 11, 11);
@@ -100,6 +108,14 @@ public:
         label_host->setMinimumSize(QSize(0, 0));
 
         horizontalLayout_3->addWidget(label_host);
+
+        label_host_2 = new QLabel(tabconf);
+        label_host_2->setObjectName(QStringLiteral("label_host_2"));
+        sizePolicy.setHeightForWidth(label_host_2->sizePolicy().hasHeightForWidth());
+        label_host_2->setSizePolicy(sizePolicy);
+        label_host_2->setMinimumSize(QSize(0, 0));
+
+        horizontalLayout_3->addWidget(label_host_2);
 
         lineEditQuery = new QLineEdit(tabconf);
         lineEditQuery->setObjectName(QStringLiteral("lineEditQuery"));
@@ -169,7 +185,7 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1582, 22));
+        menuBar->setGeometry(QRect(0, 0, 1582, 24));
         MainWindow->setMenuBar(menuBar);
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QStringLiteral("statusBar"));
@@ -177,7 +193,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        ptab->setCurrentIndex(2);
+        ptab->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -187,6 +203,7 @@ public:
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0));
         label_host->setText(QString());
+        label_host_2->setText(QApplication::translate("MainWindow", "\346\237\245\346\211\276:", 0));
         pushButtonAddConf->setText(QApplication::translate("MainWindow", "\345\242\236\345\212\240\351\205\215\347\275\256", 0));
         ptab->setTabText(ptab->indexOf(tabconf), QApplication::translate("MainWindow", "\351\205\215\347\275\256\346\226\207\344\273\266", 0));
         ptab->setTabText(ptab->indexOf(tabTask), QApplication::translate("MainWindow", "\344\273\273\345\212\241\351\230\237\345\210\227", 0));
