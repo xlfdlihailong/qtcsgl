@@ -14,6 +14,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+    QFont font;
     pmap<pstring,ptcp*> mapHostTcp;
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();

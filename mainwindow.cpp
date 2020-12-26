@@ -6,6 +6,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    font.setFamily(QStringLiteral("DejaVu Sans Mono"));
+    font.setPointSize(12);
+    ui->label_host->setFont(font);
+    ui->label_host_2->setFont(font);
+    ui->lineEditQuery->setFont(font);
+    ui->pushButtonAddConf->setFont(font);
     setWindowState(Qt::WindowMaximized);
     this->setWindowTitle("传输系统总控监控by李海龙");
     mapconf.add("IP_LOCAL","本机地址");

@@ -188,7 +188,6 @@ Makefile: qtcsgl.pro C:\Qt\Qt5.5.0\5.5\msvc2013\mkspecs\win32-msvc2013\qmake.con
 		C:\Qt\Qt5.5.0\5.5\msvc2013\mkspecs\features\win32\qt_config.prf \
 		C:\Qt\Qt5.5.0\5.5\msvc2013\mkspecs\win32-msvc2013\qmake.conf \
 		C:\Qt\Qt5.5.0\5.5\msvc2013\mkspecs\features\spec_post.prf \
-		.qmake.stash \
 		C:\Qt\Qt5.5.0\5.5\msvc2013\mkspecs\features\exclusive_builds.prf \
 		C:\Qt\Qt5.5.0\5.5\msvc2013\mkspecs\features\default_pre.prf \
 		C:\Qt\Qt5.5.0\5.5\msvc2013\mkspecs\features\win32\default_pre.prf \
@@ -330,7 +329,6 @@ C:\Qt\Qt5.5.0\5.5\msvc2013\mkspecs\features\qt_config.prf:
 C:\Qt\Qt5.5.0\5.5\msvc2013\mkspecs\features\win32\qt_config.prf:
 C:\Qt\Qt5.5.0\5.5\msvc2013\mkspecs\win32-msvc2013\qmake.conf:
 C:\Qt\Qt5.5.0\5.5\msvc2013\mkspecs\features\spec_post.prf:
-.qmake.stash:
 C:\Qt\Qt5.5.0\5.5\msvc2013\mkspecs\features\exclusive_builds.prf:
 C:\Qt\Qt5.5.0\5.5\msvc2013\mkspecs\features\default_pre.prf:
 C:\Qt\Qt5.5.0\5.5\msvc2013\mkspecs\features\win32\default_pre.prf:
@@ -369,7 +367,7 @@ clean: debug-clean release-clean  FORCE
 	-$(DEL_FILE) qtcsgl.idb
 distclean: debug-distclean release-distclean  FORCE
 	-$(DEL_FILE) Makefile
-	-$(DEL_FILE) .qmake.stash qtcsgl.lib qtcsgl.pdb
+	-$(DEL_FILE) qtcsgl.lib qtcsgl.pdb
 
 debug-mocclean:
 	@set MAKEFLAGS=$(MAKEFLAGS)
