@@ -83,6 +83,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->ptablejk->addAction(pbutSSH);
     connect(pbutSSH,SIGNAL(triggered(bool)),this,SLOT(slotSSH()));
 
+
     connect(this,SIGNAL(sigShowLabel(QString)),ui->label_host,SLOT(setText(QString)));
     //每秒自动更新conf
     std::thread(&MainWindow::slotUpdateConf,this).detach();

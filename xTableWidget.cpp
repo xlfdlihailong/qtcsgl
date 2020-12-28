@@ -86,6 +86,8 @@ xTableWidget::xTableWidget(QWidget *parent) :
     ui(new Ui::Form)
 {
     ui->setupUi(this);
+    font.setFamily(QStringLiteral("DejaVu Sans Mono"));
+    font.setPointSize(12);
     //    //封装设置表头字体为楷体14号最好看
     QHeaderView* pheader=ui->tableWidget->horizontalHeader();
     //    pheader->setStyleSheet("QHeaderView::section{background-color:rgb(40,143,218);font:14pt 'DejaVu Sans Mono';color: white;};");
@@ -480,6 +482,7 @@ void xTableWidget::clear()
 void xTableWidget::addAction(QAction *paction)
 {
     pop_menu->addAction(paction);
+    pop_menu->setFont(font);
 }
 
 QCheckBox *xTableWidget::getCheckBox(int row)
