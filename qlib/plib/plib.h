@@ -6234,7 +6234,7 @@ public:
         mapStationKJ.add("MYCZ3", CSGLStation("MYCZ3", "172.16.80.1"));
         mapStationKJ.add("YE2Z3", CSGLStation("YE2Z3", "172.17.2.1"));
         CSGLSystem systemKJ("空基系统", mapStationKJ);
-//        this->mapSystem.add("空基系统", systemKJ);
+        this->mapSystem.add("空基系统", systemKJ);
 
         pliststring listhost=this->gethostAll();
 //        hlog(listhost);

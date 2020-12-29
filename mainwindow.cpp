@@ -98,7 +98,18 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->ptableTask->setHeaderText(
                 QStringList()<<"任务流水号"<<"作业任务编号"<<"卫星名称"<<"数据源地址"<<"传输级别"<<"作业方式"
                 <<"执行状态"<<"预计开始时间");
+    ui->ptableTask->setColWidth("任务流水号",250);
     ui->ptableTask->setColWidth("作业任务编号",200);
+    ui->ptableTask->setColWidth("卫星名称",150);
+
+    pbutCopyTaskSerialNum=new QAction("复制任务流水号",this);
+    ui->ptableTask->addAction(pbutCopyTaskSerialNum);
+    connect(pbutCopyTaskSerialNum,SIGNAL(triggered(bool)),this,SLOT(slotCopyTaskSerialNum()));
+    pbutCopyJobTaskID=new QAction("复制作业任务编号",this);
+    ui->ptableTask->addAction(pbutCopyJobTaskID);
+    connect(pbutCopyJobTaskID,SIGNAL(triggered(bool)),this,SLOT(slotCopyJobTaskID()));
+
+
     ui->ptablejk->setHeaderText(QStringList()<<"服务器信息"<<"根目录占用"<<"总控状态"<<"总控cpu占用"<<"总控内存占用");
     ui->ptablejk->setColWidth("服务器信息",300);
     ui->ptablejk->setColWidth("总控cpu占用",150);
@@ -193,6 +204,20 @@ MainWindow::~MainWindow()
     delete pbutDel;
     delete pbutSet;
     delete ui;
+}
+
+void MainWindow::slotCopyTaskSerialNum()
+{
+    QString strTaskSerialNum=ui->ptableTask->getItemText(ui->ptableTask->getRowNow(),"任务流水号");
+    hlog(strTaskSerialNum);
+    qlib::setCopyInClipboard(strTaskSerialNum);
+}
+
+void MainWindow::slotCopyJobTaskID()
+{
+    QString strJobID=ui->ptableTask->getItemText(ui->ptableTask->getRowNow(),"作业任务编号");
+    hlog(strJobID);
+    qlib::setCopyInClipboard(strJobID);
 }
 
 void MainWindow::slotSSH()

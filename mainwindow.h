@@ -31,6 +31,8 @@ public:
     QAction* pbutStartSC=NULL;
     QAction* pbutStopSC=NULL;
     QAction* pbutSSH=NULL;
+    QAction* pbutCopyTaskSerialNum=NULL;
+    QAction* pbutCopyJobTaskID=NULL;
 signals:
     void sigMessageBox(QString info);
     void sigShowLabel(QString info);
@@ -40,6 +42,8 @@ signals:
     void sigUpdateTableTask(plist<pliststring>, int);
     void sigUpdateTableJK(plist<pliststring>,int);
 private slots:
+    void slotCopyTaskSerialNum();
+    void slotCopyJobTaskID();
     void slotSSH();
     void slotStopSC();
     void slotThreadStopSC();
