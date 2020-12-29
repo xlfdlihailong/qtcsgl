@@ -355,7 +355,7 @@ void MainWindow::slotThreadGetRootDiskUsage()
             sigShowStatusBar("接收根目录占用数据失败,与服务器连接断开,请重试 "+qlib::toString(plib::getTimeNow()));
             return;
         }
-        sigShowStatusBar("接收根目录占用数据成功");
+//        sigShowStatusBar("接收根目录占用数据成功");
 
 
         pmap<pstring,pliststring>  mapHostAndDiskUsage=tcp.getClass<pmap<pstring,pliststring>>();
@@ -400,7 +400,7 @@ void MainWindow::slotGetConf()
         sigShowStatusBar("接收配置信息数据失败,与服务器连接断开,请重试 "+qlib::toString(plib::getTimeNow()));
         return;
     }
-    sigShowStatusBar("接收配置信息数据成功");
+//    sigShowStatusBar("接收配置信息数据成功");
 
 
     pmap<pstring,pstring>  mapConfStation=ptc->getClass<pmap<pstring,pstring>>();
@@ -457,7 +457,7 @@ void MainWindow::slotGetTask()
         sigShowStatusBar("接收任务信息数据失败,与服务器连接断开,请重试 "+qlib::toString(plib::getTimeNow()));
         return;
     }
-    sigShowStatusBar("接收任务数据成功");
+//    sigShowStatusBar("接收任务数据成功");
 
 
     //   pmap<pstring,pstring>  mapConfStation=ptc->getClass<pmap<pstring,pstring>>();

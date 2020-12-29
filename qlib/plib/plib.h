@@ -2393,11 +2393,11 @@ public:
         this->close();
         if(this->connect()<0)
         {
-            hlog(pstring()<<"连接"<<this->ip<<":"<<this->port<<"失败,重连中...");
+            hlog(pstring()<<"connect"<<this->ip<<":"<<this->port<<"fail,retry...");
             std::thread(&ptcp::threadReconnect,this).detach();
             return -1;
         }
-        hlog(pstring()<<"连接"<<this->ip<<":"<<this->port<<"成功!");
+        hlog(pstring()<<"connect"<<this->ip<<":"<<this->port<<"success!");
         return 1;
     }
     void threadReconnect()
