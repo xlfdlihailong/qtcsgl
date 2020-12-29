@@ -97,10 +97,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->ptableTask->setHeaderText(
                 QStringList()<<"任务流水号"<<"作业任务编号"<<"卫星名称"<<"数据源地址"<<"传输级别"<<"作业方式"
-                <<"执行状态"<<"预计开始时间");
+                <<"执行状态"<<"预计开始时间"<<"分配带宽");
     ui->ptableTask->setColWidth("任务流水号",250);
     ui->ptableTask->setColWidth("作业任务编号",200);
     ui->ptableTask->setColWidth("卫星名称",150);
+    ui->ptableTask->setColWidth("预计开始时间",200);
 
     pbutCopyTaskSerialNum=new QAction("复制任务流水号",this);
     ui->ptableTask->addAction(pbutCopyTaskSerialNum);
@@ -355,7 +356,7 @@ void MainWindow::slotThreadGetRootDiskUsage()
             sigShowStatusBar("接收根目录占用数据失败,与服务器连接断开,请重试 "+qlib::toString(plib::getTimeNow()));
             return;
         }
-        sigShowStatusBar("接收根目录占用数据成功");
+//        sigShowStatusBar("接收根目录占用数据成功");
 
 
         pmap<pstring,pliststring>  mapHostAndDiskUsage=tcp.getClass<pmap<pstring,pliststring>>();
@@ -457,8 +458,7 @@ void MainWindow::slotGetTask()
         sigShowStatusBar("接收任务信息数据失败,与服务器连接断开,请重试 "+qlib::toString(plib::getTimeNow()));
         return;
     }
-    sigShowStatusBar("接收任务数据成功");
-
+//    sigShowStatusBar("接收任务数据成功");
 
     //   pmap<pstring,pstring>  mapConfStation=ptc->getClass<pmap<pstring,pstring>>();
     //    hlog(mapConfStation);
